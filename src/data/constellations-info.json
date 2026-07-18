@@ -1,0 +1,137 @@
+[
+  {
+    "id": "ursa-major",
+    "name": "Osa Mayor",
+    "latinName": "Ursa Major",
+    "mythology": "En la mitología griega representa a Calisto, transformada en osa por Hera. Sus siete estrellas más brillantes forman el asterismo conocido como \"El Carro\" o \"La Cacerola\".",
+    "mainStars": [
+      "dubhe",
+      "merak",
+      "phecda",
+      "megrez",
+      "alioth",
+      "mizar",
+      "alkaid"
+    ]
+  },
+  {
+    "id": "ursa-minor",
+    "name": "Osa Menor",
+    "latinName": "Ursa Minor",
+    "mythology": "Contiene a Polaris, la estrella polar, casi exactamente alineada con el eje de rotación terrestre — por eso apenas se mueve en el cielo nocturno y sirve para encontrar el norte.",
+    "mainStars": [
+      "polaris",
+      "kochab",
+      "pherkad"
+    ]
+  },
+  {
+    "id": "cassiopeia",
+    "name": "Casiopea",
+    "latinName": "Cassiopeia",
+    "mythology": "Representa a una reina castigada por Poseidón por su vanidad. Sus cinco estrellas principales forman una \"W\" fácilmente reconocible cerca del polo norte celeste.",
+    "mainStars": [
+      "caph",
+      "schedar",
+      "gamma-cas",
+      "ruchbah",
+      "segin"
+    ]
+  },
+  {
+    "id": "orion",
+    "name": "Orión",
+    "latinName": "Orion",
+    "mythology": "El cazador de la mitología griega. Su \"cinturón\" de tres estrellas alineadas es uno de los patrones más reconocibles del cielo, visible desde casi cualquier lugar del planeta.",
+    "mainStars": [
+      "betelgeuse",
+      "rigel",
+      "bellatrix",
+      "mintaka",
+      "alnilam",
+      "alnitak",
+      "saiph"
+    ]
+  },
+  {
+    "id": "canis-major",
+    "name": "Can Mayor",
+    "latinName": "Canis Major",
+    "mythology": "Uno de los perros de caza de Orión. Contiene a Sirio, la estrella más brillante del cielo nocturno.",
+    "mainStars": [
+      "sirius",
+      "murzim",
+      "wezen",
+      "adhara",
+      "aludra"
+    ]
+  },
+  {
+    "id": "taurus",
+    "name": "Tauro",
+    "latinName": "Taurus",
+    "mythology": "Representa al toro en el que Zeus se transformó para raptar a Europa. Su ojo, Aldebarán, es una estrella gigante roja al frente del cúmulo de las Hyades.",
+    "mainStars": [
+      "aldebaran",
+      "elnath",
+      "hyadum-1",
+      "hyadum-2",
+      "ain"
+    ]
+  },
+  {
+    "id": "leo",
+    "name": "Leo",
+    "latinName": "Leo",
+    "mythology": "El león de Nemea derrotado por Hércules. Su \"hoz\" de estrellas dibuja la cabeza y melena del león, con Régulo marcando su corazón.",
+    "mainStars": [
+      "regulus",
+      "denebola",
+      "algieba",
+      "zosma",
+      "chertan",
+      "adhafera",
+      "rasalas",
+      "eps-leo"
+    ]
+  },
+  {
+    "id": "crux",
+    "name": "Cruz del Sur",
+    "latinName": "Crux",
+    "mythology": "La constelación más pequeña del cielo, visible desde el hemisferio sur y latitudes tropicales como Colombia. Se usa tradicionalmente para ubicar el polo sur celeste.",
+    "mainStars": [
+      "acrux",
+      "mimosa",
+      "gacrux",
+      "delta-cru"
+    ]
+  },
+  {
+    "id": "scorpius",
+    "name": "Escorpión",
+    "latinName": "Scorpius",
+    "mythology": "El escorpión que, según el mito, causó la muerte de Orión — por eso ambas constelaciones nunca se ven juntas en el cielo. Antares, su corazón, es una supergigante roja.",
+    "mainStars": [
+      "antares",
+      "graffias",
+      "dschubba",
+      "sargas",
+      "shaula",
+      "lesath"
+    ]
+  },
+  {
+    "id": "cygnus",
+    "name": "Cisne",
+    "latinName": "Cygnus",
+    "mythology": "También conocida como la \"Cruz del Norte\". Deneb, su estrella principal, forma parte del asterismo del Triángulo de Verano junto con Vega y Altair.",
+    "mainStars": [
+      "deneb",
+      "sadr",
+      "albireo",
+      "gienah-cyg",
+      "fawaris"
+    ]
+  }
+]
