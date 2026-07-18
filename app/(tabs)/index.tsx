@@ -1,20 +1,16 @@
-import { useMemo, useRef, useState } from 'react';
-import { PanResponder, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import { createObserver } from '@/src/services/astro/observer';
+import { useMemo } from 'react';
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { loadStars } from '@/src/services/catalog/loadStars';
 import { loadConstellationInfos, resolveConstellations } from '@/src/services/catalog/loadConstellations';
 import { SkyCanvas } from '@/src/components/sky-map/SkyCanvas';
+import { useSkyView } from '@/src/hooks/useSkyView';
 import { colors } from '@/src/theme/colors';
 
-// Dev-only default: Bogotá. Replaced by real GPS once sensor integration lands.
-const DEV_OBSERVER = createObserver(4.711, -74.0721, 2640);
 const FOV_DEGREES = 70;
-const DRAG_SENSITIVITY = 0.25;
 
 export default function SkyMapScreen() {
   const { width, height } = useWindowDimensions();
-  const [center, setCenter] = useState({ azimuth: 180, altitude: 45 });
-  const dragStart = useRef(center);
+  const view = useSkyView();
 
   const stars = useMemo(() => loadStars(), []);
   const constellations = useMemo(() => resolveConstellations(), []);
@@ -24,36 +20,25 @@ export default function SkyMapScreen() {
     return names;
   }, []);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onPanResponderGrant: () => {
-          dragStart.current = center;
-        },
-        onPanResponderMove: (_event, gesture) => {
-          const nextAzimuth = (dragStart.current.azimuth - gesture.dx * DRAG_SENSITIVITY + 360) % 360;
-          const nextAltitude = Math.min(
-            89,
-            Math.max(-89, dragStart.current.altitude + gesture.dy * DRAG_SENSITIVITY)
-          );
-          setCenter({ azimuth: nextAzimuth, altitude: nextAltitude });
-        },
-      }),
-    [center]
-  );
+  if (!view.observer) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>{locationStatusMessage(view.geolocationStatus, view.geolocationError)}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <View {...panResponder.panHandlers}>
+      <View {...view.panHandlers}>
         <SkyCanvas
           stars={stars}
           constellations={constellations}
           constellationNames={constellationNames}
-          observer={DEV_OBSERVER}
-          date={new Date()}
-          centerAzimuth={center.azimuth}
-          centerAltitude={center.altitude}
+          observer={view.observer}
+          date={view.date}
+          centerAzimuth={view.centerAzimuth}
+          centerAltitude={view.centerAltitude}
           fovDegrees={FOV_DEGREES}
           width={width}
           height={height}
@@ -61,18 +46,41 @@ export default function SkyMapScreen() {
       </View>
       <View style={styles.hint} pointerEvents="none">
         <Text style={styles.hintText}>
-          Arrastra para mirar alrededor (az {center.azimuth.toFixed(0)}°, alt{' '}
-          {center.altitude.toFixed(0)}°)
+          {view.usingCompass ? 'Brújula' : 'Arrastra'} · {view.usingTilt ? 'inclinación' : 'arrastra (vertical)'} · az{' '}
+          {view.centerAzimuth.toFixed(0)}° alt {view.centerAltitude.toFixed(0)}°
         </Text>
       </View>
     </View>
   );
 }
 
+function locationStatusMessage(
+  status: 'requesting' | 'granted' | 'denied' | 'error',
+  errorMessage: string | null
+): string {
+  switch (status) {
+    case 'requesting':
+      return 'Buscando tu ubicación...';
+    case 'denied':
+      return 'Necesitamos tu ubicación para calcular qué estrellas son visibles desde donde estás.';
+    case 'error':
+      return `No pudimos obtener tu ubicación${errorMessage ? `: ${errorMessage}` : '.'}`;
+    case 'granted':
+      return 'Obteniendo tu posición...';
+  }
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.skyBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  text: {
+    color: colors.constellationLabel,
+    textAlign: 'center',
   },
   hint: {
     position: 'absolute',
