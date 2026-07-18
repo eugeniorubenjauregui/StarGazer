@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "StarGazer",
+    "slug": "StarGazer",
+    "version": "1.0.0",
+    "scheme": "stargazer",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para calcular qué estrellas y constelaciones son visibles desde donde estás.",
+        "NSMotionUsageDescription": "Usamos los sensores de movimiento para orientar el mapa del cielo según hacia dónde apuntas el teléfono."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["ACCESS_COARSE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usamos tu ubicación para calcular qué estrellas y constelaciones son visibles desde donde estás.",
+          "isAndroidBackgroundLocationEnabled": false,
+          "isIosBackgroundLocationEnabled": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0B1026",
+          "image": "./assets/icon.png",
+          "imageWidth": 160
+        }
+      ]
+    ]
+  }
+}
