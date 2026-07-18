@@ -1,16 +1,20 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useRouter } from 'expo-router';
 import { loadStars } from '@/src/services/catalog/loadStars';
 import { loadConstellationInfos, resolveConstellations } from '@/src/services/catalog/loadConstellations';
+import { projectSky, type ProjectedConstellation } from '@/src/services/sky-map/projectSky';
+import { findConstellationAtPoint } from '@/src/services/sky-map/hitTest';
 import { SkyCanvas } from '@/src/components/sky-map/SkyCanvas';
 import { useSkyView } from '@/src/hooks/useSkyView';
 import { colors } from '@/src/theme/colors';
 
 const FOV_DEGREES = 70;
+const TAP_HIT_RADIUS_PX = 28;
 
 export default function SkyMapScreen() {
   const { width, height } = useWindowDimensions();
-  const view = useSkyView();
+  const router = useRouter();
 
   const stars = useMemo(() => loadStars(), []);
   const constellations = useMemo(() => resolveConstellations(), []);
@@ -20,7 +24,35 @@ export default function SkyMapScreen() {
     return names;
   }, []);
 
-  if (!view.observer) {
+  const visibleConstellationsRef = useRef<ProjectedConstellation[]>([]);
+  const handleTap = useCallback(
+    (point: { x: number; y: number }) => {
+      const id = findConstellationAtPoint(point, visibleConstellationsRef.current, TAP_HIT_RADIUS_PX);
+      if (id) router.push(`/constellation/${id}`);
+    },
+    [router]
+  );
+
+  const view = useSkyView(handleTap);
+
+  const sky = useMemo(() => {
+    if (!view.observer) return null;
+    return projectSky({
+      stars,
+      constellations,
+      observer: view.observer,
+      date: view.date,
+      centerAzimuth: view.centerAzimuth,
+      centerAltitude: view.centerAltitude,
+      fovDegrees: FOV_DEGREES,
+      width,
+      height,
+    });
+  }, [stars, constellations, view.observer, view.date, view.centerAzimuth, view.centerAltitude, width, height]);
+
+  visibleConstellationsRef.current = sky?.visibleConstellations ?? [];
+
+  if (!view.observer || !sky) {
     return (
       <View style={styles.container}>
         <Text style={styles.text}>{locationStatusMessage(view.geolocationStatus, view.geolocationError)}</Text>
@@ -32,14 +64,9 @@ export default function SkyMapScreen() {
     <View style={styles.container}>
       <View {...view.panHandlers}>
         <SkyCanvas
-          stars={stars}
-          constellations={constellations}
+          projectedStars={sky.projectedStars}
+          visibleConstellations={sky.visibleConstellations}
           constellationNames={constellationNames}
-          observer={view.observer}
-          date={view.date}
-          centerAzimuth={view.centerAzimuth}
-          centerAltitude={view.centerAltitude}
-          fovDegrees={FOV_DEGREES}
           width={width}
           height={height}
         />

@@ -26,11 +26,11 @@ export interface SkyViewState {
  * touch-drag for whichever sensor isn't available (denied permission, no
  * hardware, or running in a simulator without motion support).
  */
-export function useSkyView(): SkyViewState {
+export function useSkyView(onTap?: (point: { x: number; y: number }) => void): SkyViewState {
   const geolocation = useGeolocation();
   const compass = useCompassHeading();
   const tilt = useDeviceTilt();
-  const pan = usePanFallback(DEFAULT_CENTER);
+  const pan = usePanFallback(DEFAULT_CENTER, onTap);
 
   const [date, setDate] = useState(() => new Date());
   useEffect(() => {
