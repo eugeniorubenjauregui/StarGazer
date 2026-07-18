@@ -1,11 +1,13 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { loadStars } from '@/src/services/catalog/loadStars';
 import { loadConstellationInfos, resolveConstellations } from '@/src/services/catalog/loadConstellations';
 import { projectSky, type ProjectedConstellation } from '@/src/services/sky-map/projectSky';
 import { findConstellationAtPoint } from '@/src/services/sky-map/hitTest';
 import { SkyCanvas } from '@/src/components/sky-map/SkyCanvas';
+import { SkyMapOverlayUI } from '@/src/components/sky-map/SkyMapOverlayUI';
+import { PermissionGate } from '@/src/components/sky-map/PermissionGate';
 import { useSkyView } from '@/src/hooks/useSkyView';
 import { colors } from '@/src/theme/colors';
 
@@ -54,9 +56,11 @@ export default function SkyMapScreen() {
 
   if (!view.observer || !sky) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>{locationStatusMessage(view.geolocationStatus, view.geolocationError)}</Text>
-      </View>
+      <PermissionGate
+        status={view.geolocationStatus}
+        errorMessage={view.geolocationError}
+        onRetry={view.retryGeolocation}
+      />
     );
   }
 
@@ -71,52 +75,19 @@ export default function SkyMapScreen() {
           height={height}
         />
       </View>
-      <View style={styles.hint} pointerEvents="none">
-        <Text style={styles.hintText}>
-          {view.usingCompass ? 'Brújula' : 'Arrastra'} · {view.usingTilt ? 'inclinación' : 'arrastra (vertical)'} · az{' '}
-          {view.centerAzimuth.toFixed(0)}° alt {view.centerAltitude.toFixed(0)}°
-        </Text>
-      </View>
+      <SkyMapOverlayUI
+        usingCompass={view.usingCompass}
+        usingTilt={view.usingTilt}
+        centerAzimuth={view.centerAzimuth}
+        centerAltitude={view.centerAltitude}
+      />
     </View>
   );
-}
-
-function locationStatusMessage(
-  status: 'requesting' | 'granted' | 'denied' | 'error',
-  errorMessage: string | null
-): string {
-  switch (status) {
-    case 'requesting':
-      return 'Buscando tu ubicación...';
-    case 'denied':
-      return 'Necesitamos tu ubicación para calcular qué estrellas son visibles desde donde estás.';
-    case 'error':
-      return `No pudimos obtener tu ubicación${errorMessage ? `: ${errorMessage}` : '.'}`;
-    case 'granted':
-      return 'Obteniendo tu posición...';
-  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.skyBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  text: {
-    color: colors.constellationLabel,
-    textAlign: 'center',
-  },
-  hint: {
-    position: 'absolute',
-    bottom: 24,
-    width: '100%',
-    alignItems: 'center',
-  },
-  hintText: {
-    color: colors.constellationLabel,
-    fontSize: 12,
   },
 });

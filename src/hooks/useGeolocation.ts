@@ -1,22 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 
 export interface GeolocationState {
   coords: Location.LocationObjectCoords | null;
   status: 'requesting' | 'granted' | 'denied' | 'error';
   errorMessage: string | null;
+  /** Re-requests permission and restarts watching position; use after a denial or error. */
+  retry: () => void;
 }
 
 export function useGeolocation(): GeolocationState {
-  const [state, setState] = useState<GeolocationState>({
+  const [state, setState] = useState<Omit<GeolocationState, 'retry'>>({
     coords: null,
     status: 'requesting',
     errorMessage: null,
   });
+  const [retryToken, setRetryToken] = useState(0);
+  const retry = useCallback(() => setRetryToken((token) => token + 1), []);
 
   useEffect(() => {
     let subscription: Location.LocationSubscription | null = null;
     let cancelled = false;
+
+    setState((prev) => ({ ...prev, status: 'requesting', errorMessage: null }));
 
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -45,7 +51,7 @@ export function useGeolocation(): GeolocationState {
       cancelled = true;
       subscription?.remove();
     };
-  }, []);
+  }, [retryToken]);
 
-  return state;
+  return { ...state, retry };
 }

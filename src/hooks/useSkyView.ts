@@ -18,6 +18,7 @@ export interface SkyViewState {
   usingTilt: boolean;
   geolocationStatus: 'requesting' | 'granted' | 'denied' | 'error';
   geolocationError: string | null;
+  retryGeolocation: () => void;
   panHandlers: ReturnType<typeof usePanFallback>['panHandlers'];
 }
 
@@ -62,6 +63,7 @@ export function useSkyView(onTap?: (point: { x: number; y: number }) => void): S
     usingTilt,
     geolocationStatus: geolocation.status,
     geolocationError: geolocation.errorMessage,
+    retryGeolocation: geolocation.retry,
     panHandlers: pan.panHandlers,
   };
 }
