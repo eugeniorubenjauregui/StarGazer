@@ -1,137 +1,962 @@
 [
-  {
-    "id": "ursa-major",
-    "name": "Osa Mayor",
-    "latinName": "Ursa Major",
-    "mythology": "En la mitología griega representa a Calisto, transformada en osa por Hera. Sus siete estrellas más brillantes forman el asterismo conocido como \"El Carro\" o \"La Cacerola\".",
-    "mainStars": [
-      "dubhe",
-      "merak",
-      "phecda",
-      "megrez",
-      "alioth",
-      "mizar",
-      "alkaid"
-    ]
-  },
-  {
-    "id": "ursa-minor",
-    "name": "Osa Menor",
-    "latinName": "Ursa Minor",
-    "mythology": "Contiene a Polaris, la estrella polar, casi exactamente alineada con el eje de rotación terrestre — por eso apenas se mueve en el cielo nocturno y sirve para encontrar el norte.",
-    "mainStars": [
-      "polaris",
-      "kochab",
-      "pherkad"
-    ]
-  },
-  {
-    "id": "cassiopeia",
-    "name": "Casiopea",
-    "latinName": "Cassiopeia",
-    "mythology": "Representa a una reina castigada por Poseidón por su vanidad. Sus cinco estrellas principales forman una \"W\" fácilmente reconocible cerca del polo norte celeste.",
-    "mainStars": [
-      "caph",
-      "schedar",
-      "gamma-cas",
-      "ruchbah",
-      "segin"
-    ]
-  },
-  {
-    "id": "orion",
-    "name": "Orión",
-    "latinName": "Orion",
-    "mythology": "El cazador de la mitología griega. Su \"cinturón\" de tres estrellas alineadas es uno de los patrones más reconocibles del cielo, visible desde casi cualquier lugar del planeta.",
-    "mainStars": [
-      "betelgeuse",
-      "rigel",
-      "bellatrix",
-      "mintaka",
-      "alnilam",
-      "alnitak",
-      "saiph"
-    ]
-  },
-  {
-    "id": "canis-major",
-    "name": "Can Mayor",
-    "latinName": "Canis Major",
-    "mythology": "Uno de los perros de caza de Orión. Contiene a Sirio, la estrella más brillante del cielo nocturno.",
-    "mainStars": [
-      "sirius",
-      "murzim",
-      "wezen",
-      "adhara",
-      "aludra"
-    ]
-  },
-  {
-    "id": "taurus",
-    "name": "Tauro",
-    "latinName": "Taurus",
-    "mythology": "Representa al toro en el que Zeus se transformó para raptar a Europa. Su ojo, Aldebarán, es una estrella gigante roja al frente del cúmulo de las Hyades.",
-    "mainStars": [
-      "aldebaran",
-      "elnath",
-      "hyadum-1",
-      "hyadum-2",
-      "ain"
-    ]
-  },
-  {
-    "id": "leo",
-    "name": "Leo",
-    "latinName": "Leo",
-    "mythology": "El león de Nemea derrotado por Hércules. Su \"hoz\" de estrellas dibuja la cabeza y melena del león, con Régulo marcando su corazón.",
-    "mainStars": [
-      "regulus",
-      "denebola",
-      "algieba",
-      "zosma",
-      "chertan",
-      "adhafera",
-      "rasalas",
-      "eps-leo"
-    ]
-  },
-  {
-    "id": "crux",
-    "name": "Cruz del Sur",
-    "latinName": "Crux",
-    "mythology": "La constelación más pequeña del cielo, visible desde el hemisferio sur y latitudes tropicales como Colombia. Se usa tradicionalmente para ubicar el polo sur celeste.",
-    "mainStars": [
-      "acrux",
-      "mimosa",
-      "gacrux",
-      "delta-cru"
-    ]
-  },
-  {
-    "id": "scorpius",
-    "name": "Escorpión",
-    "latinName": "Scorpius",
-    "mythology": "El escorpión que, según el mito, causó la muerte de Orión — por eso ambas constelaciones nunca se ven juntas en el cielo. Antares, su corazón, es una supergigante roja.",
-    "mainStars": [
-      "antares",
-      "graffias",
-      "dschubba",
-      "sargas",
-      "shaula",
-      "lesath"
-    ]
-  },
-  {
-    "id": "cygnus",
-    "name": "Cisne",
-    "latinName": "Cygnus",
-    "mythology": "También conocida como la \"Cruz del Norte\". Deneb, su estrella principal, forma parte del asterismo del Triángulo de Verano junto con Vega y Altair.",
-    "mainStars": [
-      "deneb",
-      "sadr",
-      "albireo",
-      "gienah-cyg",
-      "fawaris"
-    ]
-  }
+ {
+  "id": "And",
+  "name": "Andrómeda",
+  "latinName": "Andromeda",
+  "mythology": "Andrómeda, la princesa encadenada rescatada por Perseo. Alberga la galaxia espiral más cercana a la Vía Láctea, M31.",
+  "mainStars": [
+   "677",
+   "5447",
+   "9640",
+   "7607",
+   "7513",
+   "6411"
+  ]
+ },
+ {
+  "id": "Ant",
+  "name": "Máquina Neumática",
+  "latinName": "Antlia",
+  "mythology": "La Máquina Neumática, nombrada en el siglo XVIII por Lacaille en honor a la bomba de aire de los laboratorios de física.",
+  "mainStars": []
+ },
+ {
+  "id": "Aps",
+  "name": "Ave del Paraíso",
+  "latinName": "Apus",
+  "mythology": "El Ave del Paraíso, constelación austral tenue introducida por navegantes holandeses en el siglo XVI.",
+  "mainStars": []
+ },
+ {
+  "id": "Aqr",
+  "name": "Acuario",
+  "latinName": "Aquarius",
+  "mythology": "Acuario, el aguador que sirve néctar a los dioses. Una de las constelaciones más antiguas del zodíaco.",
+  "mainStars": [
+   "106278",
+   "109074",
+   "113136",
+   "110960",
+   "112961",
+   "102618"
+  ]
+ },
+ {
+  "id": "Aql",
+  "name": "Águila",
+  "latinName": "Aquila",
+  "mythology": "El Águila que llevaba los rayos de Zeus. Su estrella principal, Altair, forma el Triángulo de Verano con Vega y Deneb.",
+  "mainStars": [
+   "97649",
+   "97278",
+   "93747",
+   "95501",
+   "93805",
+   "98036"
+  ]
+ },
+ {
+  "id": "Ara",
+  "name": "Altar",
+  "latinName": "Ara",
+  "mythology": "El Altar donde los dioses del Olimpo sellaron su alianza antes de enfrentar a los titanes.",
+  "mainStars": [
+   "85792",
+   "86796"
+  ]
+ },
+ {
+  "id": "Ari",
+  "name": "Carnero",
+  "latinName": "Aries",
+  "mythology": "Aries, el carnero del vellocino de oro que buscaban Jasón y los argonautas.",
+  "mainStars": [
+   "9884",
+   "8903",
+   "13209",
+   "8832",
+   "14838",
+   "13061"
+  ]
+ },
+ {
+  "id": "Aur",
+  "name": "Cochero",
+  "latinName": "Auriga",
+  "mythology": "El Cochero, asociado a Erictonio, inventor del carro de cuatro caballos. Capella, su estrella más brillante, es la sexta del cielo.",
+  "mainStars": [
+   "24608",
+   "28360",
+   "28380",
+   "23015",
+   "23416",
+   "23767"
+  ]
+ },
+ {
+  "id": "Boo",
+  "name": "Boyero",
+  "latinName": "Bootes",
+  "mythology": "El Boyero, pastor que conduce las osas alrededor del polo. Arturo, su estrella principal, es la más brillante del hemisferio norte celeste.",
+  "mainStars": [
+   "69673",
+   "72105",
+   "67927",
+   "71075",
+   "74666",
+   "73555"
+  ]
+ },
+ {
+  "id": "Cae",
+  "name": "Cincel",
+  "latinName": "Caelum",
+  "mythology": "El Cincel, pequeña constelación austral nombrada por Lacaille en honor a las herramientas del grabador.",
+  "mainStars": []
+ },
+ {
+  "id": "Cam",
+  "name": "Jirafa",
+  "latinName": "Camelopardalis",
+  "mythology": "La Jirafa, constelación boreal tenue introducida en el siglo XVII para llenar el espacio entre las osas y Casiopea.",
+  "mainStars": []
+ },
+ {
+  "id": "Cnc",
+  "name": "Cangrejo",
+  "latinName": "Cancer",
+  "mythology": "Cáncer, el cangrejo que atacó a Hércules durante su lucha con la Hidra. Alberga el cúmulo del Pesebre (M44).",
+  "mainStars": [
+   "40526",
+   "42911",
+   "43103",
+   "44066",
+   "42806",
+   "40167"
+  ]
+ },
+ {
+  "id": "CVn",
+  "name": "Lebreles",
+  "latinName": "Canes Venatici",
+  "mythology": "Los Perros de Caza del Boyero, Asterión y Chara, que persiguen a la Osa Mayor.",
+  "mainStars": [
+   "63125",
+   "61317",
+   "62223"
+  ]
+ },
+ {
+  "id": "CMa",
+  "name": "Perro Mayor",
+  "latinName": "Canis Maior",
+  "mythology": "Uno de los perros de caza de Orión. Contiene a Sirio, la estrella más brillante del cielo nocturno.",
+  "mainStars": [
+   "32349",
+   "33579",
+   "34444",
+   "30324",
+   "35904",
+   "30122"
+  ]
+ },
+ {
+  "id": "CMi",
+  "name": "Perro Menor",
+  "latinName": "Canis Minor",
+  "mythology": "El Can Menor, el segundo perro de Orión. Proción, su estrella principal, forma el Triángulo de Invierno con Sirio y Betelgeuse.",
+  "mainStars": [
+   "37279",
+   "36188"
+  ]
+ },
+ {
+  "id": "Cap",
+  "name": "Capricornio",
+  "latinName": "Capricornus",
+  "mythology": "Capricornio, la cabra marina asociada al dios Pan, que se transformó a medias en pez para escapar del monstruo Tifón.",
+  "mainStars": [
+   "107556",
+   "100345",
+   "100064",
+   "106985",
+   "105881",
+   "102485"
+  ]
+ },
+ {
+  "id": "Car",
+  "name": "Carina",
+  "latinName": "Carina",
+  "mythology": "La Quilla del navío Argo. Canopus, su estrella principal, es la segunda más brillante de todo el cielo.",
+  "mainStars": [
+   "30438",
+   "45238",
+   "41037",
+   "45556"
+  ]
+ },
+ {
+  "id": "Cas",
+  "name": "Casiopea",
+  "latinName": "Cassiopeia",
+  "mythology": "Representa a una reina castigada por Poseidón por su vanidad. Sus cinco estrellas principales forman una \"W\" fácilmente reconocible cerca del polo norte celeste.",
+  "mainStars": [
+   "4427",
+   "3179",
+   "746",
+   "6686",
+   "8886",
+   "3821"
+  ]
+ },
+ {
+  "id": "Cen",
+  "name": "Centauro",
+  "latinName": "Centaurus",
+  "mythology": "El Centauro Quirón, sabio maestro de héroes. Alfa Centauri, el sistema estelar más cercano al Sol, marca su pata delantera.",
+  "mainStars": [
+   "71683",
+   "68702",
+   "71681",
+   "68933",
+   "61932",
+   "68002"
+  ]
+ },
+ {
+  "id": "Cep",
+  "name": "Cefeo",
+  "latinName": "Cepheus",
+  "mythology": "Cefeo, rey de Etiopía, esposo de Casiopea y padre de Andrómeda.",
+  "mainStars": [
+   "105199",
+   "116727",
+   "106032",
+   "102422",
+   "101093",
+   "107259"
+  ]
+ },
+ {
+  "id": "Cet",
+  "name": "Ballena",
+  "latinName": "Cetus",
+  "mythology": "La Ballena (o monstruo marino) enviada a devorar a Andrómeda, petrificada por Perseo con la cabeza de Medusa.",
+  "mainStars": [
+   "3419",
+   "14135",
+   "5364",
+   "12706",
+   "1562",
+   "6537"
+  ]
+ },
+ {
+  "id": "Cha",
+  "name": "Camaleón",
+  "latinName": "Chamaeleon",
+  "mythology": "El Camaleón, constelación austral introducida por navegantes holandeses en el siglo XVI.",
+  "mainStars": []
+ },
+ {
+  "id": "Cir",
+  "name": "Compás",
+  "latinName": "Circinus",
+  "mythology": "El Compás de dibujo, pequeña constelación austral nombrada por Lacaille.",
+  "mainStars": []
+ },
+ {
+  "id": "Col",
+  "name": "Paloma",
+  "latinName": "Columba",
+  "mythology": "La Paloma que guió el arca de Noé, o la que soltaron los argonautas para cruzar las rocas Simplégades.",
+  "mainStars": [
+   "26634",
+   "27628",
+   "29034"
+  ]
+ },
+ {
+  "id": "Com",
+  "name": "Pelo de Berenice",
+  "latinName": "Coma Berenices",
+  "mythology": "La Cabellera de Berenice, reina de Egipto que ofreció su cabello a los dioses por el regreso de su esposo.",
+  "mainStars": [
+   "64241",
+   "60742",
+   "62763",
+   "61071"
+  ]
+ },
+ {
+  "id": "CrA",
+  "name": "Corona Austral",
+  "latinName": "Corona Australis",
+  "mythology": "La Corona Austral, guirnalda a los pies de Sagitario.",
+  "mainStars": [
+   "94114"
+  ]
+ },
+ {
+  "id": "CrB",
+  "name": "Corona Boreal",
+  "latinName": "Corona Borealis",
+  "mythology": "La Corona Boreal, diadema de Ariadna lanzada al cielo por Dioniso.",
+  "mainStars": [
+   "76267",
+   "75695",
+   "77442"
+  ]
+ },
+ {
+  "id": "Crv",
+  "name": "Cuervo",
+  "latinName": "Corvus",
+  "mythology": "El Cuervo de Apolo, castigado por mentir sobre su tardanza en traer agua.",
+  "mainStars": [
+   "59803",
+   "61359",
+   "60965",
+   "59316",
+   "59199"
+  ]
+ },
+ {
+  "id": "Crt",
+  "name": "Copa",
+  "latinName": "Crater",
+  "mythology": "La Copa de Apolo, junto al Cuervo y la Hidra en un mismo mito.",
+  "mainStars": [
+   "55282",
+   "53740",
+   "54682"
+  ]
+ },
+ {
+  "id": "Cru",
+  "name": "Cruz del Sur",
+  "latinName": "Crux",
+  "mythology": "La constelación más pequeña del cielo, visible desde el hemisferio sur y latitudes tropicales como Colombia. Se usa tradicionalmente para ubicar el polo sur celeste.",
+  "mainStars": [
+   "60718",
+   "62434",
+   "61084",
+   "59747",
+   "60260"
+  ]
+ },
+ {
+  "id": "Cyg",
+  "name": "Cisne",
+  "latinName": "Cygnus",
+  "mythology": "También conocida como la \"Cruz del Norte\". Deneb, su estrella principal, forma parte del asterismo del Triángulo de Verano junto con Vega y Altair.",
+  "mainStars": [
+   "102098",
+   "100453",
+   "102488",
+   "97165",
+   "95947",
+   "94779"
+  ]
+ },
+ {
+  "id": "Del",
+  "name": "Delfín",
+  "latinName": "Delphinus",
+  "mythology": "El Delfín que convenció a Anfitrite de casarse con Poseidón.",
+  "mainStars": [
+   "101769",
+   "101958",
+   "101421",
+   "102532",
+   "102281",
+   "103527"
+  ]
+ },
+ {
+  "id": "Dor",
+  "name": "Pez dorado",
+  "latinName": "Dorado",
+  "mythology": "El Pez Dorado (dorado o mahi-mahi), constelación austral que alberga la Gran Nube de Magallanes.",
+  "mainStars": []
+ },
+ {
+  "id": "Dra",
+  "name": "Dragón",
+  "latinName": "Draco",
+  "mythology": "El Dragón Ladón que custodiaba las manzanas de oro del jardín de las Hespérides, vencido por Hércules.",
+  "mainStars": [
+   "87833",
+   "80331",
+   "85670",
+   "94376",
+   "83895",
+   "75458"
+  ]
+ },
+ {
+  "id": "Equ",
+  "name": "Caballito",
+  "latinName": "Equuleus",
+  "mythology": "El Caballito, la segunda constelación más pequeña del cielo, asociado al potro Celeris.",
+  "mainStars": [
+   "104987"
+  ]
+ },
+ {
+  "id": "Eri",
+  "name": "Erídano",
+  "latinName": "Eridanus",
+  "mythology": "El río Erídano, por donde cayó Faetón tras perder el control del carro del Sol. Serpentea desde Orión hasta Achernar.",
+  "mainStars": [
+   "7588",
+   "23875",
+   "13847",
+   "18543",
+   "17378",
+   "20042"
+  ]
+ },
+ {
+  "id": "For",
+  "name": "Horno",
+  "latinName": "Fornax",
+  "mythology": "El Horno químico, nombrado por Lacaille en honor a los instrumentos de laboratorio.",
+  "mainStars": [
+   "14879"
+  ]
+ },
+ {
+  "id": "Gem",
+  "name": "Gemelos",
+  "latinName": "Gemini",
+  "mythology": "Géminis, los gemelos Cástor y Pólux, protectores de los navegantes y compañeros de los argonautas.",
+  "mainStars": [
+   "37826",
+   "36850",
+   "31681",
+   "30343",
+   "32246",
+   "29655"
+  ]
+ },
+ {
+  "id": "Gru",
+  "name": "Grulla",
+  "latinName": "Grus",
+  "mythology": "La Grulla, ave sagrada de Hermes, constelación austral del siglo XVI.",
+  "mainStars": [
+   "109268",
+   "112122",
+   "108085"
+  ]
+ },
+ {
+  "id": "Her",
+  "name": "Hércules",
+  "latinName": "Hercules",
+  "mythology": "Hércules arrodillado, el héroe de los doce trabajos. Alberga el gran cúmulo globular M13.",
+  "mainStars": [
+   "80816",
+   "84345",
+   "81693",
+   "84379",
+   "85693",
+   "80463"
+  ]
+ },
+ {
+  "id": "Hor",
+  "name": "Reloj",
+  "latinName": "Horologium",
+  "mythology": "El Reloj de péndulo, constelación austral tenue nombrada por Lacaille.",
+  "mainStars": []
+ },
+ {
+  "id": "Hya",
+  "name": "Hidra",
+  "latinName": "Hydra",
+  "mythology": "La Hidra de Lerna, el monstruo de múltiples cabezas vencido por Hércules. Es la constelación más extensa del cielo.",
+  "mainStars": [
+   "46390",
+   "43109",
+   "47431",
+   "48356",
+   "42313",
+   "42402"
+  ]
+ },
+ {
+  "id": "Hyi",
+  "name": "Hidra Macho",
+  "latinName": "Hydrus",
+  "mythology": "La Hidra Macho, pequeña serpiente austral cerca de las Nubes de Magallanes.",
+  "mainStars": []
+ },
+ {
+  "id": "Ind",
+  "name": "Indio",
+  "latinName": "Indus",
+  "mythology": "El Indio, constelación austral del siglo XVI que representa a un nativo americano.",
+  "mainStars": [
+   "101772"
+  ]
+ },
+ {
+  "id": "Lac",
+  "name": "Lagarto",
+  "latinName": "Lacerta",
+  "mythology": "La Lagartija, constelación boreal tenue creada por Hevelius en el siglo XVII.",
+  "mainStars": []
+ },
+ {
+  "id": "Leo",
+  "name": "León",
+  "latinName": "Leo",
+  "mythology": "El león de Nemea derrotado por Hércules. Su \"hoz\" de estrellas dibuja la cabeza y melena del león, con Régulo marcando su corazón.",
+  "mainStars": [
+   "49669",
+   "50583",
+   "57632",
+   "54872",
+   "47908",
+   "54879"
+  ]
+ },
+ {
+  "id": "LMi",
+  "name": "León Menor",
+  "latinName": "Leo Minor",
+  "mythology": "El León Menor, pequeño felino entre el León y la Osa Mayor.",
+  "mainStars": [
+   "53229"
+  ]
+ },
+ {
+  "id": "Lep",
+  "name": "Conejo",
+  "latinName": "Lepus",
+  "mythology": "La Liebre que huye eternamente de Orión y sus perros a los pies del cazador.",
+  "mainStars": [
+   "25985",
+   "25606",
+   "27072",
+   "27654"
+  ]
+ },
+ {
+  "id": "Lib",
+  "name": "Balanza",
+  "latinName": "Libra",
+  "mythology": "Libra, la balanza de la justicia sostenida por Astrea (Virgo). Único instrumento del zodíaco.",
+  "mainStars": [
+   "74785",
+   "72622",
+   "73714",
+   "76333",
+   "73473",
+   "72603"
+  ]
+ },
+ {
+  "id": "Lup",
+  "name": "Lobo",
+  "latinName": "Lupus",
+  "mythology": "El Lobo, animal empalado por el Centauro como ofrenda en el Altar.",
+  "mainStars": [
+   "71860",
+   "73273"
+  ]
+ },
+ {
+  "id": "Lyn",
+  "name": "Lince",
+  "latinName": "Lynx",
+  "mythology": "El Lince, nombrado así por Hevelius porque \"hace falta vista de lince\" para distinguir sus estrellas tenues.",
+  "mainStars": [
+   "41075",
+   "46471"
+  ]
+ },
+ {
+  "id": "Lyr",
+  "name": "Lira",
+  "latinName": "Lyra",
+  "mythology": "La Lira de Orfeo, cuya música encantaba a todo ser viviente. Vega, su estrella principal, es la quinta más brillante del cielo.",
+  "mainStars": [
+   "91262",
+   "93194",
+   "92420",
+   "91971",
+   "94481",
+   "91919"
+  ]
+ },
+ {
+  "id": "Men",
+  "name": "Mesa",
+  "latinName": "Mensa",
+  "mythology": "La Mesa, nombrada por Lacaille en honor a la Montaña de la Mesa de Ciudad del Cabo. La más tenue de las 88.",
+  "mainStars": []
+ },
+ {
+  "id": "Mic",
+  "name": "Microscopio",
+  "latinName": "Microscopium",
+  "mythology": "El Microscopio, constelación austral nombrada por Lacaille en honor al instrumento científico.",
+  "mainStars": []
+ },
+ {
+  "id": "Mon",
+  "name": "Unicornio",
+  "latinName": "Monoceros",
+  "mythology": "El Unicornio, constelación ecuatorial del siglo XVII situada dentro del Triángulo de Invierno.",
+  "mainStars": []
+ },
+ {
+  "id": "Mus",
+  "name": "Mosca",
+  "latinName": "Musca",
+  "mythology": "La Mosca, pequeña constelación austral junto a la Cruz del Sur.",
+  "mainStars": []
+ },
+ {
+  "id": "Nor",
+  "name": "Escuadra",
+  "latinName": "Norma",
+  "mythology": "La Escuadra de carpintero, constelación austral nombrada por Lacaille.",
+  "mainStars": []
+ },
+ {
+  "id": "Oct",
+  "name": "Bastón",
+  "latinName": "Octans",
+  "mythology": "El Octante, instrumento de navegación. Contiene el polo sur celeste, sin ninguna estrella brillante que lo marque.",
+  "mainStars": [
+   "104382"
+  ]
+ },
+ {
+  "id": "Oph",
+  "name": "Ofiuco",
+  "latinName": "Ophiuchus",
+  "mythology": "Ofiuco, el portador de la serpiente: Asclepio, dios de la medicina, capaz de resucitar a los muertos.",
+  "mainStars": [
+   "86032",
+   "84012",
+   "81377",
+   "79593",
+   "86742",
+   "79882"
+  ]
+ },
+ {
+  "id": "Ori",
+  "name": "Orión",
+  "latinName": "Orion",
+  "mythology": "El cazador de la mitología griega. Su \"cinturón\" de tres estrellas alineadas es uno de los patrones más reconocibles del cielo, visible desde casi cualquier lugar del planeta.",
+  "mainStars": [
+   "24436",
+   "27989",
+   "25336",
+   "26311",
+   "26727",
+   "27366"
+  ]
+ },
+ {
+  "id": "Pav",
+  "name": "Pavo",
+  "latinName": "Pavo",
+  "mythology": "El Pavo real, ave de Hera, constelación austral del siglo XVI.",
+  "mainStars": [
+   "100751"
+  ]
+ },
+ {
+  "id": "Peg",
+  "name": "Pegaso",
+  "latinName": "Pegasus",
+  "mythology": "Pegaso, el caballo alado nacido de la sangre de Medusa. Su Gran Cuadrado es una referencia del cielo otoñal boreal.",
+  "mainStars": [
+   "107315",
+   "113881",
+   "113963",
+   "1067",
+   "112158",
+   "112029"
+  ]
+ },
+ {
+  "id": "Per",
+  "name": "Perseo",
+  "latinName": "Perseus",
+  "mythology": "Perseo, el héroe que decapitó a Medusa y rescató a Andrómeda. Algol, su \"estrella demonio\", representa el ojo de la gorgona.",
+  "mainStars": [
+   "15863",
+   "14576",
+   "18246",
+   "14354",
+   "13268",
+   "14668"
+  ]
+ },
+ {
+  "id": "Phe",
+  "name": "Fénix",
+  "latinName": "Phoenix",
+  "mythology": "El Fénix, el ave que renace de sus cenizas, constelación austral del siglo XVI.",
+  "mainStars": [
+   "2081",
+   "5348"
+  ]
+ },
+ {
+  "id": "Pic",
+  "name": "Paleta del Pintor",
+  "latinName": "Pictor",
+  "mythology": "El Caballete del pintor, constelación austral nombrada por Lacaille.",
+  "mainStars": []
+ },
+ {
+  "id": "Psc",
+  "name": "Peces",
+  "latinName": "Pisces",
+  "mythology": "Piscis, los dos peces atados por una cuerda: Afrodita y Eros transformados para escapar de Tifón.",
+  "mainStars": [
+   "7097",
+   "9487",
+   "8198",
+   "3786",
+   "113889",
+   "5737"
+  ]
+ },
+ {
+  "id": "PsA",
+  "name": "Pez Austral",
+  "latinName": "Piscis Austrinus",
+  "mythology": "El Pez Austral, que bebe el agua vertida por Acuario. Fomalhaut, su boca, es la estrella brillante más solitaria del cielo.",
+  "mainStars": [
+   "113368",
+   "111188"
+  ]
+ },
+ {
+  "id": "Pup",
+  "name": "Popa",
+  "latinName": "Puppis",
+  "mythology": "La Popa del navío Argo, fragmento de la antigua gran constelación desmembrada por Lacaille.",
+  "mainStars": [
+   "39429",
+   "39757",
+   "38170",
+   "37229"
+  ]
+ },
+ {
+  "id": "Pyx",
+  "name": "Brújula",
+  "latinName": "Pyxis",
+  "mythology": "La Brújula del navío Argo, nombrada por Lacaille.",
+  "mainStars": []
+ },
+ {
+  "id": "Ret",
+  "name": "Retículo",
+  "latinName": "Reticulum",
+  "mythology": "El Retículo, en honor a la retícula del ocular con que Lacaille midió las estrellas australes.",
+  "mainStars": []
+ },
+ {
+  "id": "Sge",
+  "name": "Flecha",
+  "latinName": "Sagitta",
+  "mythology": "La Flecha, tercera constelación más pequeña, asociada a las flechas de Cupido o de Hércules.",
+  "mainStars": [
+   "96757"
+  ]
+ },
+ {
+  "id": "Sgr",
+  "name": "Sagitario",
+  "latinName": "Sagittarius",
+  "mythology": "Sagitario, el centauro arquero que apunta al corazón del Escorpión. Hacia él se encuentra el centro de la Vía Láctea.",
+  "mainStars": [
+   "90185",
+   "92855",
+   "93506",
+   "89931",
+   "90496",
+   "94141"
+  ]
+ },
+ {
+  "id": "Sco",
+  "name": "Escorpión",
+  "latinName": "Scorpius",
+  "mythology": "El escorpión que, según el mito, causó la muerte de Orión — por eso ambas constelaciones nunca se ven juntas en el cielo. Antares, su corazón, es una supergigante roja.",
+  "mainStars": [
+   "80763",
+   "85927",
+   "86228",
+   "78401",
+   "82396",
+   "86670"
+  ]
+ },
+ {
+  "id": "Scl",
+  "name": "Escultor",
+  "latinName": "Sculptor",
+  "mythology": "El Escultor (originalmente \"el taller del escultor\"), nombrada por Lacaille. Contiene el polo sur galáctico.",
+  "mainStars": []
+ },
+ {
+  "id": "Sct",
+  "name": "Escudo",
+  "latinName": "Scutum",
+  "mythology": "El Escudo de Sobieski, en honor al rey polaco Juan III. La única constelación moderna nombrada por una figura histórica real.",
+  "mainStars": []
+ },
+ {
+  "id": "Ser",
+  "name": "Serpiente",
+  "latinName": "Serpens",
+  "mythology": "La Serpiente de Asclepio, única constelación dividida en dos mitades (cabeza y cola) separadas por Ofiuco.",
+  "mainStars": [
+   "77070",
+   "77233",
+   "76276",
+   "77450",
+   "88175",
+   "92946"
+  ]
+ },
+ {
+  "id": "Sex",
+  "name": "Sextante",
+  "latinName": "Sextans",
+  "mythology": "El Sextante astronómico de Hevelius, con el que midió posiciones estelares a simple vista.",
+  "mainStars": []
+ },
+ {
+  "id": "Tau",
+  "name": "Toro",
+  "latinName": "Taurus",
+  "mythology": "Representa al toro en el que Zeus se transformó para raptar a Europa. Su ojo, Aldebarán, es una estrella gigante roja al frente del cúmulo de las Hyades.",
+  "mainStars": [
+   "21421",
+   "25428",
+   "17702",
+   "26451",
+   "20894",
+   "20889"
+  ]
+ },
+ {
+  "id": "Tel",
+  "name": "Telescopio",
+  "latinName": "Telescopium",
+  "mythology": "El Telescopio, constelación austral nombrada por Lacaille.",
+  "mainStars": []
+ },
+ {
+  "id": "Tri",
+  "name": "Triángulo",
+  "latinName": "Triangulum",
+  "mythology": "El Triángulo, pequeña constelación boreal que alberga la galaxia espiral M33.",
+  "mainStars": [
+   "10064",
+   "8796"
+  ]
+ },
+ {
+  "id": "TrA",
+  "name": "Triángulo Austral",
+  "latinName": "Triangulum Australe",
+  "mythology": "El Triángulo Austral, contraparte sureña del Triángulo boreal.",
+  "mainStars": [
+   "82273"
+  ]
+ },
+ {
+  "id": "Tuc",
+  "name": "Tucán",
+  "latinName": "Tucana",
+  "mythology": "El Tucán, ave sudamericana llevada al cielo austral por navegantes del siglo XVI. Alberga la Pequeña Nube de Magallanes.",
+  "mainStars": []
+ },
+ {
+  "id": "UMa",
+  "name": "Osa Mayor",
+  "latinName": "Ursa Maior",
+  "mythology": "En la mitología griega representa a Calisto, transformada en osa por Hera. Sus siete estrellas más brillantes forman el asterismo conocido como \"El Carro\" o \"La Cacerola\".",
+  "mainStars": [
+   "62956",
+   "54061",
+   "67301",
+   "65378",
+   "53910",
+   "58001"
+  ]
+ },
+ {
+  "id": "UMi",
+  "name": "Osa Menor",
+  "latinName": "Ursa Minor",
+  "mythology": "Contiene a Polaris, la estrella polar, casi exactamente alineada con el eje de rotación terrestre — por eso apenas se mueve en el cielo nocturno y sirve para encontrar el norte.",
+  "mainStars": [
+   "11767",
+   "72607",
+   "75097",
+   "82080",
+   "77055",
+   "85822"
+  ]
+ },
+ {
+  "id": "Vel",
+  "name": "Vela",
+  "latinName": "Vela",
+  "mythology": "Las Velas del navío Argo, fragmento de la antigua constelación de la nave de los argonautas.",
+  "mainStars": [
+   "39953",
+   "42913",
+   "44816",
+   "45941",
+   "45448"
+  ]
+ },
+ {
+  "id": "Vir",
+  "name": "Virgen",
+  "latinName": "Virgo",
+  "mythology": "Virgo, la diosa de la justicia Astrea, o Deméter con la espiga de trigo (Spica) en la mano.",
+  "mainStars": [
+   "65474",
+   "61941",
+   "63608",
+   "66249",
+   "63090",
+   "57757"
+  ]
+ },
+ {
+  "id": "Vol",
+  "name": "Pez Volador",
+  "latinName": "Volans",
+  "mythology": "El Pez Volador, constelación austral del siglo XVI.",
+  "mainStars": []
+ },
+ {
+  "id": "Vul",
+  "name": "Zorro",
+  "latinName": "Vulpecula",
+  "mythology": "La Zorra (con el ganso), creada por Hevelius. Alberga la nebulosa planetaria Dumbbell (M27).",
+  "mainStars": [
+   "95771"
+  ]
+ }
 ]

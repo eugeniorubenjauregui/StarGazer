@@ -68,6 +68,14 @@ const WORLD_UP: Vector3 = { x: 0, y: 0, z: 1 };
 /** Used only when the view center is within this many radians of the zenith/nadir. */
 const POLE_EPSILON = 1e-6;
 
+function viewBasis(viewCenter: Vector3): { right: Vector3; up: Vector3 } {
+  const referenceUp =
+    Math.abs(dot(viewCenter, WORLD_UP)) > 1 - POLE_EPSILON ? { x: 1, y: 0, z: 0 } : WORLD_UP;
+  const right = normalize(cross(viewCenter, referenceUp));
+  const up = cross(right, viewCenter);
+  return { right, up };
+}
+
 /**
  * Gnomonic (tangent-plane) projection of a point on the celestial sphere onto
  * the screen, centered on `viewCenter`. Preserves straight lines, which is why
@@ -84,11 +92,7 @@ export function projectGnomonic(
   const cosC = dot(viewCenter, point);
   if (cosC <= 0) return null;
 
-  const referenceUp =
-    Math.abs(dot(viewCenter, WORLD_UP)) > 1 - POLE_EPSILON ? { x: 1, y: 0, z: 0 } : WORLD_UP;
-  const right = normalize(cross(viewCenter, referenceUp));
-  const up = cross(right, viewCenter);
-
+  const { right, up } = viewBasis(viewCenter);
   const tx = dot(point, right) / cosC;
   const ty = dot(point, up) / cosC;
 
@@ -97,4 +101,19 @@ export function projectGnomonic(
     x: screenWidth / 2 + tx * scale,
     y: screenHeight / 2 - ty * scale,
   };
+}
+
+/**
+ * Screen-space direction from the view center toward a target that may be
+ * off-screen or behind the viewer — used to draw a "look this way" guide
+ * arrow. Returns a unit vector where +x is screen-right and +y is screen-down,
+ * or null when the target is dead-center (no meaningful direction).
+ */
+export function screenDirection(target: Vector3, viewCenter: Vector3): { dx: number; dy: number } | null {
+  const { right, up } = viewBasis(viewCenter);
+  const dx = dot(target, right);
+  const dy = -dot(target, up);
+  const length = Math.hypot(dx, dy);
+  if (length < 1e-9) return null;
+  return { dx: dx / length, dy: dy / length };
 }

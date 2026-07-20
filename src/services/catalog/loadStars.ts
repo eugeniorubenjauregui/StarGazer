@@ -11,3 +11,8 @@ export function loadStars(): Star[] {
 export function getStarById(id: string): Star | undefined {
   return STARS_BY_ID.get(id);
 }
+
+/** Named stars, brightest first — the searchable subset of the catalog. */
+export function loadNamedStars(): Star[] {
+  return STARS.filter((star) => star.name).sort((a, b) => a.magnitude - b.magnitude);
+}

@@ -31,6 +31,7 @@
     "@types/node": "^26.1.1",
     "@types/react": "~19.2.2",
     "babel-preset-expo": "~57.0.3",
+    "d3-celestial": "^0.7.35",
     "jest": "^29.7.0",
     "jest-expo": "^57.0.2",
     "ts-node": "^10.9.2",

@@ -26,18 +26,22 @@ export interface SkyViewState {
  * Combines GPS, compass and tilt into a single view direction, falling back to
  * touch-drag for whichever sensor isn't available (denied permission, no
  * hardware, or running in a simulator without motion support).
+ *
+ * `dateOffsetMs` shifts the sky in time ("time travel") while keeping the
+ * 30-second refresh tick anchored to the real clock.
  */
-export function useSkyView(onTap?: (point: { x: number; y: number }) => void): SkyViewState {
+export function useSkyView(onTap?: (point: { x: number; y: number }) => void, dateOffsetMs = 0): SkyViewState {
   const geolocation = useGeolocation();
   const compass = useCompassHeading();
   const tilt = useDeviceTilt();
   const pan = usePanFallback(DEFAULT_CENTER, onTap);
 
-  const [date, setDate] = useState(() => new Date());
+  const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    const id = setInterval(() => setDate(new Date()), DATE_REFRESH_INTERVAL_MS);
+    const id = setInterval(() => setNow(new Date()), DATE_REFRESH_INTERVAL_MS);
     return () => clearInterval(id);
   }, []);
+  const date = useMemo(() => new Date(now.getTime() + dateOffsetMs), [now, dateOffsetMs]);
 
   const observer = useMemo(() => {
     if (!geolocation.coords) return null;

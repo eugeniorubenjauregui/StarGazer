@@ -1,15 +1,14 @@
-import { loadStars, getStarById } from '@/src/services/catalog/loadStars';
+import { loadStars, getStarById, loadNamedStars } from '@/src/services/catalog/loadStars';
 import {
   loadConstellations,
   loadConstellationInfos,
   getConstellationInfo,
-  resolveConstellations,
 } from '@/src/services/catalog/loadConstellations';
 
 describe('loadStars', () => {
-  it('loads a non-empty, well-formed star catalog', () => {
+  it('loads the full naked-eye catalog', () => {
     const stars = loadStars();
-    expect(stars.length).toBeGreaterThan(0);
+    expect(stars.length).toBeGreaterThan(4000);
     for (const star of stars) {
       expect(star.ra).toBeGreaterThanOrEqual(0);
       expect(star.ra).toBeLessThan(24);
@@ -19,48 +18,56 @@ describe('loadStars', () => {
     }
   });
 
-  it('finds a known star by id', () => {
-    expect(getStarById('sirius')?.name).toBe('Sirius');
+  it('finds Sirius (HIP 32349) with its Spanish name', () => {
+    expect(getStarById('32349')?.name).toBe('Sirio');
   });
 
-  it('returns undefined for an unknown id', () => {
-    expect(getStarById('not-a-real-star')).toBeUndefined();
+  it('returns named stars sorted brightest-first', () => {
+    const named = loadNamedStars();
+    expect(named.length).toBeGreaterThan(300);
+    expect(named[0].name).toBe('Sirio');
+    for (let i = 1; i < named.length; i++) {
+      expect(named[i].magnitude).toBeGreaterThanOrEqual(named[i - 1].magnitude);
+    }
   });
 });
 
 describe('loadConstellations', () => {
-  it('every line segment references stars that exist in the catalog', () => {
-    for (const constellation of loadConstellations()) {
-      for (const [a, b] of constellation.segments) {
-        expect(getStarById(a)).toBeDefined();
-        expect(getStarById(b)).toBeDefined();
+  it('loads all 88 IAU constellations with line data', () => {
+    const constellations = loadConstellations();
+    expect(constellations).toHaveLength(88);
+    for (const constellation of constellations) {
+      expect(constellation.lines.length).toBeGreaterThan(0);
+      for (const line of constellation.lines) {
+        expect(line.length).toBeGreaterThanOrEqual(2);
+        for (const [ra, dec] of line) {
+          expect(ra).toBeGreaterThanOrEqual(0);
+          expect(ra).toBeLessThan(24);
+          expect(dec).toBeGreaterThanOrEqual(-90);
+          expect(dec).toBeLessThanOrEqual(90);
+        }
       }
     }
   });
 
-  it('every constellation has matching info with valid main stars', () => {
+  it('has info (Spanish name + mythology) for every constellation', () => {
+    const infos = loadConstellationInfos();
+    expect(infos).toHaveLength(88);
     const constellationIds = new Set(loadConstellations().map((c) => c.id));
-    for (const info of loadConstellationInfos()) {
+    for (const info of infos) {
       expect(constellationIds.has(info.id)).toBe(true);
-      expect(info.mainStars.length).toBeGreaterThan(0);
+      expect(info.name.length).toBeGreaterThan(0);
+      expect(info.mythology.length).toBeGreaterThan(20);
       for (const starId of info.mainStars) {
         expect(getStarById(starId)).toBeDefined();
       }
     }
   });
 
-  it('looks up constellation info by id', () => {
-    expect(getConstellationInfo('orion')?.name).toBe('Orión');
-  });
-
-  it('resolves segments to full star records with matching ids', () => {
-    const resolved = resolveConstellations();
-    const orion = resolved.find((c) => c.id === 'orion');
-    expect(orion).toBeDefined();
-    expect(orion!.segments.length).toBeGreaterThan(0);
-    for (const { a, b } of orion!.segments) {
-      expect(a.id).toEqual(expect.any(String));
-      expect(b.id).toEqual(expect.any(String));
-    }
+  it('looks up Orion in Spanish by IAU code', () => {
+    const orion = getConstellationInfo('Ori');
+    expect(orion?.name).toBe('Orión');
+    expect(orion?.latinName).toBe('Orion');
+    expect(orion?.mainStars.length).toBeGreaterThan(3);
   });
 });

@@ -1,15 +1,14 @@
-export const colors = {
-  skyBackground: '#02030F',
-  surface: '#0D1330',
-  surfaceBorder: '#232C55',
-  star: '#FFFFFF',
-  constellationLine: '#4C6B9A',
-  constellationLabel: '#9FB3D6',
-  horizonHint: '#2A2F45',
-  cardinal: '#E8B84B',
-  planet: '#F5D9A0',
-  accent: '#7C9EFF',
-  textPrimary: '#F2F5FF',
-  textSecondary: '#9FB3D6',
-  success: '#6BD98F',
-};
+import { usePreferencesStore } from '@/src/store/usePreferencesStore';
+import { basePalette, nightPalette, type Palette } from './palettes';
+
+/**
+ * Static default palette, for module-level styling that can't react to the
+ * night-mode toggle. Components should prefer `useColors()`.
+ */
+export const colors = basePalette;
+
+/** Reactive palette: switches to the red night-vision palette when night mode is on. */
+export function useColors(): Palette {
+  const nightMode = usePreferencesStore((state) => state.nightMode);
+  return nightMode ? nightPalette : basePalette;
+}

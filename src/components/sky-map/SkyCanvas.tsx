@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { Platform } from 'react-native';
-import { Canvas, Circle, Line, Text, matchFont, type SkFont } from '@shopify/react-native-skia';
-import { colors } from '@/src/theme/colors';
+import { Canvas, Circle, Line, Points, Text, matchFont, vec, type SkFont } from '@shopify/react-native-skia';
+import { useColors } from '@/src/theme/colors';
+import type { Palette } from '@/src/theme/palettes';
 import { radiusForMagnitude, opacityForMagnitude } from './starVisuals';
 import type {
   ProjectedStar,
@@ -18,6 +20,8 @@ export interface SkyCanvasProps {
   cardinalMarkers?: CardinalMarker[];
   /** Display name shown next to each constellation, keyed by constellation id. */
   constellationNames?: Record<string, string>;
+  /** Screen point to highlight (search target). */
+  highlightPoint?: { x: number; y: number } | null;
   width: number;
   height: number;
   showLabels?: boolean;
@@ -25,19 +29,22 @@ export interface SkyCanvasProps {
   transparent?: boolean;
 }
 
-const labelFont = matchFont({
-  fontFamily: Platform.select({ ios: 'Helvetica', android: 'sans-serif', default: 'sans-serif' }),
-  fontSize: 12,
-  fontStyle: 'normal',
-  fontWeight: 'normal',
-});
+const fontFamily = Platform.select({ ios: 'Helvetica', android: 'sans-serif', default: 'sans-serif' });
+const labelFont = matchFont({ fontFamily, fontSize: 12, fontStyle: 'normal', fontWeight: 'normal' });
+const cardinalFont = matchFont({ fontFamily, fontSize: 16, fontStyle: 'normal', fontWeight: 'bold' });
 
-const cardinalFont = matchFont({
-  fontFamily: Platform.select({ ios: 'Helvetica', android: 'sans-serif', default: 'sans-serif' }),
-  fontSize: 16,
-  fontStyle: 'normal',
-  fontWeight: 'bold',
-});
+/** Stars brighter than this render as individual circles; the rest go into batched point buckets. */
+const BRIGHT_STAR_MAGNITUDE = 2.0;
+/** Named stars brighter than this get a name label. */
+const LABELED_STAR_MAGNITUDE = 0.8;
+
+/** Faint-star buckets: one batched Points draw call per bucket instead of thousands of Circle nodes. */
+const FAINT_BUCKETS = [
+  { maxMagnitude: 3.0, size: 3.2, opacity: 0.85 },
+  { maxMagnitude: 4.0, size: 2.4, opacity: 0.65 },
+  { maxMagnitude: 5.0, size: 1.7, opacity: 0.45 },
+  { maxMagnitude: 6.5, size: 1.2, opacity: 0.3 },
+];
 
 /** Purely presentational: draws already-projected screen-space points. See services/sky-map/projectSky for the astronomy -> screen pipeline. */
 export function SkyCanvas({
@@ -46,27 +53,47 @@ export function SkyCanvas({
   projectedPlanets = [],
   cardinalMarkers = [],
   constellationNames = {},
+  highlightPoint = null,
   width,
   height,
   showLabels = true,
   transparent = false,
 }: SkyCanvasProps) {
+  const colors = useColors();
+  const { brightStars, faintBuckets } = useMemo(() => {
+    const bright: ProjectedStar[] = [];
+    const buckets = FAINT_BUCKETS.map(() => [] as ReturnType<typeof vec>[]);
+    for (const projected of projectedStars) {
+      if (projected.star.magnitude < BRIGHT_STAR_MAGNITUDE) {
+        bright.push(projected);
+        continue;
+      }
+      const bucketIndex = FAINT_BUCKETS.findIndex((b) => projected.star.magnitude < b.maxMagnitude);
+      buckets[bucketIndex === -1 ? FAINT_BUCKETS.length - 1 : bucketIndex].push(
+        vec(projected.point.x, projected.point.y)
+      );
+    }
+    return { brightStars: bright, faintBuckets: buckets };
+  }, [projectedStars]);
+
   return (
     <Canvas style={{ width, height, backgroundColor: transparent ? 'transparent' : colors.skyBackground }}>
-      <HorizonAndCardinals markers={cardinalMarkers} />
+      <HorizonAndCardinals markers={cardinalMarkers} colors={colors} />
       {visibleConstellations.map((constellation) => (
-        <ConstellationLines key={constellation.id} segments={constellation.segments} />
+        <ConstellationLines key={constellation.id} segments={constellation.segments} colors={colors} />
       ))}
-      {showLabels &&
-        visibleConstellations.map((constellation) => (
-          <ConstellationLabel
-            key={`label-${constellation.id}`}
-            label={constellationNames[constellation.id] ?? constellation.id}
-            segments={constellation.segments}
-            font={labelFont}
-          />
-        ))}
-      {projectedStars.map(({ star, point }) => (
+      {faintBuckets.map((points, index) => (
+        <Points
+          key={`bucket-${index}`}
+          points={points}
+          mode="points"
+          color={colors.star}
+          strokeWidth={FAINT_BUCKETS[index].size}
+          strokeCap="round"
+          opacity={FAINT_BUCKETS[index].opacity}
+        />
+      ))}
+      {brightStars.map(({ star, point }) => (
         <Circle
           key={star.id}
           cx={point.x}
@@ -76,9 +103,39 @@ export function SkyCanvas({
           opacity={opacityForMagnitude(star.magnitude)}
         />
       ))}
+      {showLabels &&
+        brightStars
+          .filter(({ star }) => star.name && star.magnitude < LABELED_STAR_MAGNITUDE)
+          .map(({ star, point }) => (
+            <Text
+              key={`star-label-${star.id}`}
+              x={point.x + 8}
+              y={point.y - 6}
+              text={star.name!}
+              font={labelFont}
+              color={colors.constellationLabel}
+              opacity={0.8}
+            />
+          ))}
+      {showLabels &&
+        visibleConstellations.map((constellation) => (
+          <ConstellationLabel
+            key={`label-${constellation.id}`}
+            label={constellationNames[constellation.id] ?? constellation.id}
+            constellation={constellation}
+            font={labelFont}
+            colors={colors}
+          />
+        ))}
       {projectedPlanets.map(({ planet, point }) => (
-        <PlanetMark key={planet.id} name={planet.name} magnitude={planet.magnitude} point={point} />
+        <PlanetMark key={planet.id} name={planet.name} magnitude={planet.magnitude} point={point} colors={colors} />
       ))}
+      {highlightPoint && (
+        <>
+          <Circle cx={highlightPoint.x} cy={highlightPoint.y} r={26} color={colors.accent} style="stroke" strokeWidth={2} />
+          <Circle cx={highlightPoint.x} cy={highlightPoint.y} r={32} color={colors.accent} style="stroke" strokeWidth={1} opacity={0.4} />
+        </>
+      )}
     </Canvas>
   );
 }
@@ -87,10 +144,12 @@ function PlanetMark({
   name,
   magnitude,
   point,
+  colors,
 }: {
   name: string;
   magnitude: number;
   point: { x: number; y: number };
+  colors: Palette;
 }) {
   const radius = Math.max(3, radiusForMagnitude(magnitude) + 1);
   return (
@@ -108,7 +167,7 @@ function PlanetMark({
  * each and a segmented horizon line between adjacent visible markers, so the
  * user always knows which way they're facing and where the ground is.
  */
-function HorizonAndCardinals({ markers }: { markers: CardinalMarker[] }) {
+function HorizonAndCardinals({ markers, colors }: { markers: CardinalMarker[]; colors: Palette }) {
   return (
     <>
       {markers.map((marker, index) => {
@@ -153,8 +212,10 @@ function HorizonAndCardinals({ markers }: { markers: CardinalMarker[] }) {
 
 function ConstellationLines({
   segments,
+  colors,
 }: {
   segments: { pointA: { x: number; y: number }; pointB: { x: number; y: number } }[];
+  colors: Palette;
 }) {
   return (
     <>
@@ -174,19 +235,28 @@ function ConstellationLines({
 
 function ConstellationLabel({
   label,
-  segments,
+  constellation,
   font,
+  colors,
 }: {
   label: string;
-  segments: { pointA: { x: number; y: number }; pointB: { x: number; y: number } }[];
+  constellation: ProjectedConstellation;
   font: SkFont;
+  colors: Palette;
 }) {
-  const centroid = segments.reduce(
-    (acc, { pointA }) => ({ x: acc.x + pointA.x, y: acc.y + pointA.y }),
-    { x: 0, y: 0 }
-  );
-  const x = centroid.x / segments.length;
-  const y = centroid.y / segments.length;
+  let x: number;
+  let y: number;
+  if (constellation.labelPoint) {
+    x = constellation.labelPoint.x;
+    y = constellation.labelPoint.y;
+  } else {
+    const centroid = constellation.segments.reduce(
+      (acc, { pointA }) => ({ x: acc.x + pointA.x, y: acc.y + pointA.y }),
+      { x: 0, y: 0 }
+    );
+    x = centroid.x / constellation.segments.length;
+    y = centroid.y / constellation.segments.length;
+  }
 
-  return <Text x={x} y={y} text={label} font={font} color={colors.constellationLabel} />;
+  return <Text x={x} y={y} text={label} font={font} color={colors.constellationLabel} opacity={0.7} />;
 }

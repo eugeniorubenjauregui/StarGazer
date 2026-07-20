@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/src/theme/colors';
+import { useColors } from '@/src/theme/colors';
 
 export interface SkyMapOverlayUIProps {
   usingCompass: boolean;
@@ -10,6 +10,11 @@ export interface SkyMapOverlayUIProps {
   arEnabled: boolean;
   arAvailable: boolean;
   onToggleAr: () => void;
+  nightMode: boolean;
+  onToggleNightMode: () => void;
+  onOpenSearch: () => void;
+  timeTravelActive: boolean;
+  onToggleTimeTravel: () => void;
 }
 
 const CARDINAL_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
@@ -26,39 +31,99 @@ export function SkyMapOverlayUI({
   arEnabled,
   arAvailable,
   onToggleAr,
+  nightMode,
+  onToggleNightMode,
+  onOpenSearch,
+  timeTravelActive,
+  onToggleTimeTravel,
 }: SkyMapOverlayUIProps) {
+  const palette = useColors();
+  const chipStyle = {
+    backgroundColor: nightMode ? 'rgba(28, 5, 5, 0.88)' : 'rgba(13, 19, 48, 0.85)',
+    borderColor: palette.surfaceBorder,
+  };
+
   return (
     <>
       <View style={styles.topBar} pointerEvents="box-none">
-        <View style={styles.headingChip}>
-          <Ionicons name="compass-outline" size={16} color={colors.cardinal} />
-          <Text style={styles.headingText}>
+        <View style={[styles.headingChip, chipStyle]}>
+          <Ionicons name="compass-outline" size={16} color={palette.cardinal} />
+          <Text style={[styles.headingText, { color: palette.textPrimary }]}>
             {cardinalFromAzimuth(centerAzimuth)} {centerAzimuth.toFixed(0)}°
           </Text>
-          <Text style={styles.altText}>alt {centerAltitude.toFixed(0)}°</Text>
+          <Text style={[styles.altText, { color: palette.textSecondary }]}>alt {centerAltitude.toFixed(0)}°</Text>
         </View>
-        {arAvailable && (
-          <Pressable
-            style={[styles.arButton, arEnabled && styles.arButtonActive]}
-            onPress={onToggleAr}
-            accessibilityLabel={arEnabled ? 'Desactivar cámara' : 'Activar cámara'}
-          >
-            <Ionicons name={arEnabled ? 'camera' : 'camera-outline'} size={18} color={arEnabled ? colors.skyBackground : colors.textPrimary} />
-            <Text style={[styles.arButtonText, arEnabled && styles.arButtonTextActive]}>AR</Text>
-          </Pressable>
-        )}
+        <View style={styles.actions}>
+          <IconButton icon="search" active={false} chipStyle={chipStyle} onPress={onOpenSearch} label="Buscar objeto" />
+          <IconButton
+            icon="time-outline"
+            active={timeTravelActive}
+            chipStyle={chipStyle}
+            onPress={onToggleTimeTravel}
+            label="Viajar en el tiempo"
+          />
+          <IconButton
+            icon={nightMode ? 'eye' : 'eye-outline'}
+            active={nightMode}
+            chipStyle={chipStyle}
+            onPress={onToggleNightMode}
+            label="Modo visión nocturna"
+          />
+          {arAvailable && (
+            <IconButton
+              icon={arEnabled ? 'camera' : 'camera-outline'}
+              active={arEnabled}
+              chipStyle={chipStyle}
+              onPress={onToggleAr}
+              label={arEnabled ? 'Desactivar cámara' : 'Activar cámara'}
+            />
+          )}
+        </View>
       </View>
 
       <View style={styles.bottomBar} pointerEvents="none">
-        <View style={styles.sensorChip}>
-          <View style={[styles.dot, { backgroundColor: usingCompass ? colors.success : colors.textSecondary }]} />
-          <Text style={styles.sensorText}>{usingCompass ? 'Brújula activa' : 'Arrastra para girar'}</Text>
-          <View style={styles.separator} />
-          <View style={[styles.dot, { backgroundColor: usingTilt ? colors.success : colors.textSecondary }]} />
-          <Text style={styles.sensorText}>{usingTilt ? 'Inclinación activa' : 'Arrastra vertical'}</Text>
+        <View style={[styles.sensorChip, chipStyle]}>
+          <View style={[styles.dot, { backgroundColor: usingCompass ? palette.success : palette.textSecondary }]} />
+          <Text style={[styles.sensorText, { color: palette.textSecondary }]}>
+            {usingCompass ? 'Brújula activa' : 'Arrastra para girar'}
+          </Text>
+          <View style={[styles.separator, { backgroundColor: palette.surfaceBorder }]} />
+          <View style={[styles.dot, { backgroundColor: usingTilt ? palette.success : palette.textSecondary }]} />
+          <Text style={[styles.sensorText, { color: palette.textSecondary }]}>
+            {usingTilt ? 'Inclinación activa' : 'Arrastra vertical'}
+          </Text>
         </View>
       </View>
     </>
+  );
+}
+
+function IconButton({
+  icon,
+  active,
+  chipStyle,
+  onPress,
+  label,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  active: boolean;
+  chipStyle: { backgroundColor: string; borderColor: string };
+  onPress: () => void;
+  label: string;
+}) {
+  const palette = useColors();
+  return (
+    <Pressable
+      style={[
+        styles.iconButton,
+        chipStyle,
+        active && { backgroundColor: palette.cardinal, borderColor: palette.cardinal },
+      ]}
+      onPress={onPress}
+      accessibilityLabel={label}
+    >
+      <Ionicons name={icon} size={18} color={active ? palette.skyBackground : palette.textPrimary} />
+    </Pressable>
   );
 }
 
@@ -76,44 +141,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(13, 19, 48, 0.85)',
-    borderColor: colors.surfaceBorder,
     borderWidth: 1,
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 14,
   },
   headingText: {
-    color: colors.textPrimary,
     fontSize: 14,
     fontWeight: '700',
   },
   altText: {
-    color: colors.textSecondary,
     fontSize: 12,
   },
-  arButton: {
+  actions: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(13, 19, 48, 0.85)',
-    borderColor: colors.surfaceBorder,
+    gap: 8,
+  },
+  iconButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     borderWidth: 1,
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-  },
-  arButtonActive: {
-    backgroundColor: colors.cardinal,
-    borderColor: colors.cardinal,
-  },
-  arButtonText: {
-    color: colors.textPrimary,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  arButtonTextActive: {
-    color: colors.skyBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   bottomBar: {
     position: 'absolute',
@@ -125,8 +175,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(13, 19, 48, 0.85)',
-    borderColor: colors.surfaceBorder,
     borderWidth: 1,
     borderRadius: 16,
     paddingVertical: 6,
@@ -138,13 +186,11 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   sensorText: {
-    color: colors.textSecondary,
     fontSize: 11,
   },
   separator: {
     width: 1,
     height: 12,
-    backgroundColor: colors.surfaceBorder,
     marginHorizontal: 4,
   },
 });

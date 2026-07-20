@@ -6,8 +6,7 @@ import {
   type ScreenPoint,
   type Vector3,
 } from '@/src/services/astro/coordinates';
-import type { Star } from '@/src/services/catalog/types';
-import type { ResolvedConstellation } from '@/src/services/catalog/loadConstellations';
+import type { Star, Constellation } from '@/src/services/catalog/types';
 import type { PlanetPosition } from '@/src/services/astro/planets';
 
 export interface ProjectedStar {
@@ -18,6 +17,13 @@ export interface ProjectedStar {
 export interface ProjectedConstellation {
   id: string;
   segments: { pointA: ScreenPoint; pointB: ScreenPoint }[];
+  /** Canonical label anchor when it falls inside the view. */
+  labelPoint?: ScreenPoint;
+}
+
+export interface ProjectedPlanet {
+  planet: PlanetPosition;
+  point: ScreenPoint;
 }
 
 export interface CardinalMarker {
@@ -26,17 +32,49 @@ export interface CardinalMarker {
   point: ScreenPoint;
 }
 
-export interface ProjectedPlanet {
-  planet: PlanetPosition;
-  point: ScreenPoint;
-}
-
 export interface ProjectedSky {
   projectedStars: ProjectedStar[];
   visibleConstellations: ProjectedConstellation[];
-  projectedPointById: Map<string, ScreenPoint>;
   cardinalMarkers: CardinalMarker[];
   projectedPlanets: ProjectedPlanet[];
+}
+
+/**
+ * Slow tier: everything that depends only on observer position and date —
+ * recomputed every ~30s or on a GPS change, never per sensor frame. With the
+ * full ~5000-star catalog this is the expensive half of the pipeline (one
+ * astronomy-engine Horizon() call per object).
+ */
+export interface SkyGeometry {
+  stars: { star: Star; vector: Vector3 }[];
+  constellations: { id: string; lineVectors: Vector3[][]; labelVector: Vector3 }[];
+  planets: { planet: PlanetPosition; vector: Vector3; belowHorizon: boolean }[];
+}
+
+export function computeSkyGeometry(
+  stars: Star[],
+  constellations: Constellation[],
+  planets: PlanetPosition[],
+  observer: Observer,
+  date: Date
+): SkyGeometry {
+  const toVector = (ra: number, dec: number): { vector: Vector3; altitude: number } => {
+    const horizontal = equatorialToHorizontal(ra, dec, observer, date);
+    return { vector: altAzToVector(horizontal.azimuth, horizontal.altitude), altitude: horizontal.altitude };
+  };
+
+  return {
+    stars: stars.map((star) => ({ star, vector: toVector(star.ra, star.dec).vector })),
+    constellations: constellations.map((constellation) => ({
+      id: constellation.id,
+      lineVectors: constellation.lines.map((line) => line.map(([ra, dec]) => toVector(ra, dec).vector)),
+      labelVector: toVector(constellation.label[0], constellation.label[1]).vector,
+    })),
+    planets: planets.map((planet) => {
+      const { vector, altitude } = toVector(planet.ra, planet.dec);
+      return { planet, vector, belowHorizon: altitude < 0 };
+    }),
+  };
 }
 
 const CARDINAL_POINTS: { label: string; azimuth: number }[] = [
@@ -68,97 +106,59 @@ export function projectCardinalMarkers(
   return markers;
 }
 
-/** Slow tier: RA/Dec -> Az/Alt -> unit vector only depends on observer position and date, not view direction. */
-export function computeStarVectors(stars: Star[], observer: Observer, date: Date): Map<string, Vector3> {
-  const map = new Map<string, Vector3>();
-  for (const star of stars) {
-    const horizontal = equatorialToHorizontal(star.ra, star.dec, observer, date);
-    map.set(star.id, altAzToVector(horizontal.azimuth, horizontal.altitude));
-  }
-  return map;
-}
-
-/** Fast tier: projecting cached vectors onto the screen from the current view direction. */
-export function projectVectors(
-  starVectors: Map<string, Vector3>,
+/**
+ * Fast tier: projects precomputed geometry onto the screen for the current
+ * view direction. Cheap dot products only — safe to run on every sensor
+ * update.
+ */
+export function projectGeometry(
+  geometry: SkyGeometry,
   centerAzimuth: number,
   centerAltitude: number,
   fovDegrees: number,
   width: number,
   height: number
-): Map<string, ScreenPoint> {
+): ProjectedSky {
   const fovRadians = (fovDegrees * Math.PI) / 180;
   const viewCenter = altAzToVector(centerAzimuth, centerAltitude);
-  const points = new Map<string, ScreenPoint>();
-  for (const [id, vector] of starVectors) {
-    const point = projectGnomonic(vector, viewCenter, fovRadians, width, height);
-    if (point) points.set(id, point);
-  }
-  return points;
-}
-
-export interface ProjectSkyParams {
-  stars: Star[];
-  constellations: ResolvedConstellation[];
-  planets?: PlanetPosition[];
-  observer: Observer;
-  date: Date;
-  centerAzimuth: number;
-  centerAltitude: number;
-  fovDegrees: number;
-  width: number;
-  height: number;
-}
-
-export function projectSky({
-  stars,
-  constellations,
-  planets = [],
-  observer,
-  date,
-  centerAzimuth,
-  centerAltitude,
-  fovDegrees,
-  width,
-  height,
-}: ProjectSkyParams): ProjectedSky {
-  const starVectors = computeStarVectors(stars, observer, date);
-  const projectedPointById = projectVectors(starVectors, centerAzimuth, centerAltitude, fovDegrees, width, height);
 
   const projectedStars: ProjectedStar[] = [];
-  for (const star of stars) {
-    const point = projectedPointById.get(star.id);
+  for (const { star, vector } of geometry.stars) {
+    const point = projectGnomonic(vector, viewCenter, fovRadians, width, height);
     if (point) projectedStars.push({ star, point });
   }
 
   const visibleConstellations: ProjectedConstellation[] = [];
-  for (const constellation of constellations) {
+  for (const constellation of geometry.constellations) {
     const segments: { pointA: ScreenPoint; pointB: ScreenPoint }[] = [];
-    for (const { a, b } of constellation.segments) {
-      const pointA = projectedPointById.get(a.id);
-      const pointB = projectedPointById.get(b.id);
-      if (pointA && pointB) segments.push({ pointA, pointB });
+    for (const line of constellation.lineVectors) {
+      let previous: ScreenPoint | null = null;
+      for (const vector of line) {
+        const point = projectGnomonic(vector, viewCenter, fovRadians, width, height);
+        if (point && previous) segments.push({ pointA: previous, pointB: point });
+        previous = point;
+      }
     }
-    if (segments.length > 0) visibleConstellations.push({ id: constellation.id, segments });
+    if (segments.length === 0) continue;
+    const labelPoint = projectGnomonic(constellation.labelVector, viewCenter, fovRadians, width, height);
+    visibleConstellations.push({
+      id: constellation.id,
+      segments,
+      ...(labelPoint ? { labelPoint } : {}),
+    });
   }
 
-  const cardinalMarkers = projectCardinalMarkers(centerAzimuth, centerAltitude, fovDegrees, width, height);
-
-  const fovRadians = (fovDegrees * Math.PI) / 180;
-  const viewCenter = altAzToVector(centerAzimuth, centerAltitude);
   const projectedPlanets: ProjectedPlanet[] = [];
-  for (const planet of planets) {
-    const horizontal = equatorialToHorizontal(planet.ra, planet.dec, observer, date);
-    if (horizontal.altitude < 0) continue; // below the horizon, not visible
-    const point = projectGnomonic(
-      altAzToVector(horizontal.azimuth, horizontal.altitude),
-      viewCenter,
-      fovRadians,
-      width,
-      height
-    );
+  for (const { planet, vector, belowHorizon } of geometry.planets) {
+    if (belowHorizon) continue;
+    const point = projectGnomonic(vector, viewCenter, fovRadians, width, height);
     if (point) projectedPlanets.push({ planet, point });
   }
 
-  return { projectedStars, visibleConstellations, projectedPointById, cardinalMarkers, projectedPlanets };
+  return {
+    projectedStars,
+    visibleConstellations,
+    cardinalMarkers: projectCardinalMarkers(centerAzimuth, centerAltitude, fovDegrees, width, height),
+    projectedPlanets,
+  };
 }
