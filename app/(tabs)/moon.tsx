@@ -13,13 +13,20 @@ export default function MoonScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <MoonPhaseIcon phase={phase.name} />
-      <Text style={styles.phaseName}>{MOON_PHASE_LABELS[phase.name]}</Text>
-      <Text style={styles.illumination}>{Math.round(phase.illumination * 100)}% iluminada</Text>
+      <View style={styles.heroCard}>
+        <MoonPhaseIcon phase={phase.name} size={96} />
+        <Text style={styles.phaseName}>{MOON_PHASE_LABELS[phase.name]}</Text>
+        <View style={styles.illuminationBadge}>
+          <View style={[styles.illuminationFill, { width: `${Math.round(phase.illumination * 100)}%` }]} />
+        </View>
+        <Text style={styles.illumination}>{Math.round(phase.illumination * 100)}% iluminada</Text>
+      </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Próximas fases</Text>
-        <MoonCalendarList quarters={upcomingQuarters} />
+        <View style={styles.calendarCard}>
+          <MoonCalendarList quarters={upcomingQuarters} />
+        </View>
       </View>
     </ScrollView>
   );
@@ -31,30 +38,58 @@ const styles = StyleSheet.create({
     backgroundColor: colors.skyBackground,
   },
   content: {
+    paddingTop: 72,
+    paddingHorizontal: 20,
+    paddingBottom: 32,
+  },
+  heroCard: {
     alignItems: 'center',
-    paddingTop: 48,
+    backgroundColor: colors.surface,
+    borderColor: colors.surfaceBorder,
+    borderWidth: 1,
+    borderRadius: 24,
+    paddingVertical: 32,
     paddingHorizontal: 24,
-    paddingBottom: 24,
   },
   phaseName: {
-    color: colors.star,
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 8,
+    color: colors.textPrimary,
+    fontSize: 22,
+    fontWeight: '700',
+    marginTop: 12,
+  },
+  illuminationBadge: {
+    width: '70%',
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.horizonHint,
+    marginTop: 16,
+    overflow: 'hidden',
+  },
+  illuminationFill: {
+    height: '100%',
+    borderRadius: 3,
+    backgroundColor: colors.cardinal,
   },
   illumination: {
-    color: colors.constellationLabel,
-    fontSize: 14,
-    marginTop: 4,
+    color: colors.textSecondary,
+    fontSize: 13,
+    marginTop: 8,
   },
   section: {
-    width: '100%',
-    marginTop: 40,
+    marginTop: 28,
   },
   sectionTitle: {
-    color: colors.star,
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 12,
+  },
+  calendarCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.surfaceBorder,
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
   },
 });

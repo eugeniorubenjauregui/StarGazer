@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para calcular qué estrellas y constelaciones son visibles desde donde estás.",
-        "NSMotionUsageDescription": "Usamos los sensores de movimiento para orientar el mapa del cielo según hacia dónde apuntas el teléfono."
+        "NSMotionUsageDescription": "Usamos los sensores de movimiento para orientar el mapa del cielo según hacia dónde apuntas el teléfono.",
+        "NSCameraUsageDescription": "Usamos la cámara para superponer el mapa del cielo sobre lo que estás viendo (modo AR)."
       }
     },
     "android": {
@@ -30,6 +31,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Usamos la cámara para superponer el mapa del cielo sobre lo que estás viendo (modo AR)."
+        }
+      ],
       [
         "expo-location",
         {

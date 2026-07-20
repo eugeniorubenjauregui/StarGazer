@@ -1,5 +1,10 @@
 import { createObserver } from '@/src/services/astro/observer';
-import { computeStarVectors, projectVectors, projectSky } from '@/src/services/sky-map/projectSky';
+import {
+  computeStarVectors,
+  projectVectors,
+  projectSky,
+  projectCardinalMarkers,
+} from '@/src/services/sky-map/projectSky';
 import type { Star } from '@/src/services/catalog/types';
 import type { ResolvedConstellation } from '@/src/services/catalog/loadConstellations';
 
@@ -25,6 +30,28 @@ describe('computeStarVectors + projectVectors', () => {
     // From 45N, the south celestial pole is always below the horizon.
     const points = projectVectors(vectors, 0, 45, 70, 1000, 800);
     expect(points.has('south-pole-star')).toBe(false);
+  });
+});
+
+describe('projectCardinalMarkers', () => {
+  it('centers N on screen when facing due north at the horizon', () => {
+    const markers = projectCardinalMarkers(0, 0, 70, 1000, 800);
+    const north = markers.find((m) => m.label === 'N');
+    expect(north).toBeDefined();
+    expect(north!.point.x).toBeCloseTo(500, 5);
+    expect(north!.point.y).toBeCloseTo(400, 5);
+  });
+
+  it('omits compass points behind the viewer', () => {
+    const markers = projectCardinalMarkers(0, 0, 70, 1000, 800);
+    expect(markers.find((m) => m.label === 'S')).toBeUndefined();
+  });
+
+  it('places E to the right of N when facing north', () => {
+    const markers = projectCardinalMarkers(0, 0, 70, 1000, 800);
+    const north = markers.find((m) => m.label === 'N')!;
+    const east = markers.find((m) => m.label === 'E')!;
+    expect(east.point.x).toBeGreaterThan(north.point.x);
   });
 });
 
