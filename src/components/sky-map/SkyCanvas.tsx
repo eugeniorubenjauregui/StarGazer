@@ -1,6 +1,16 @@
 import { useMemo } from 'react';
 import { Platform } from 'react-native';
-import { Canvas, Circle, Line, Points, Text, matchFont, vec, type SkFont } from '@shopify/react-native-skia';
+import {
+  Canvas,
+  Circle,
+  Line,
+  Points,
+  Text,
+  Skia,
+  matchFont,
+  vec,
+  type SkFont,
+} from '@shopify/react-native-skia';
 import { useColors } from '@/src/theme/colors';
 import type { Palette } from '@/src/theme/palettes';
 import { radiusForMagnitude, opacityForMagnitude } from './starVisuals';
@@ -29,9 +39,26 @@ export interface SkyCanvasProps {
   transparent?: boolean;
 }
 
-const fontFamily = Platform.select({ ios: 'Helvetica', android: 'sans-serif', default: 'sans-serif' });
-const labelFont = matchFont({ fontFamily, fontSize: 12, fontStyle: 'normal', fontWeight: 'normal' });
-const cardinalFont = matchFont({ fontFamily, fontSize: 16, fontStyle: 'normal', fontWeight: 'bold' });
+/**
+ * Resolves fonts lazily, after Skia is available.
+ * ASSUMPTION: On web, matchFont/System FontMgr is unreliable before CanvasKit
+ * loads; use the default Skia.Font there and null-guard every consumer.
+ */
+function resolveFont(fontSize: number, bold: boolean): SkFont | null {
+  try {
+    if (Platform.OS === 'web') {
+      return Skia.Font(undefined, fontSize);
+    }
+    return matchFont({
+      fontFamily: Platform.select({ ios: 'Helvetica', android: 'sans-serif', default: 'sans-serif' }),
+      fontSize,
+      fontStyle: 'normal',
+      fontWeight: bold ? 'bold' : 'normal',
+    });
+  } catch {
+    return null;
+  }
+}
 
 /** Stars brighter than this render as individual circles; the rest go into batched point buckets. */
 const BRIGHT_STAR_MAGNITUDE = 2.0;
@@ -60,6 +87,9 @@ export function SkyCanvas({
   transparent = false,
 }: SkyCanvasProps) {
   const colors = useColors();
+  const labelFont = useMemo(() => resolveFont(12, false), []);
+  const cardinalFont = useMemo(() => resolveFont(16, true), []);
+
   const { brightStars, faintBuckets } = useMemo(() => {
     const bright: ProjectedStar[] = [];
     const buckets = FAINT_BUCKETS.map(() => [] as ReturnType<typeof vec>[]);
@@ -78,7 +108,7 @@ export function SkyCanvas({
 
   return (
     <Canvas style={{ width, height, backgroundColor: transparent ? 'transparent' : colors.skyBackground }}>
-      <HorizonAndCardinals markers={cardinalMarkers} colors={colors} />
+      <HorizonAndCardinals markers={cardinalMarkers} colors={colors} font={cardinalFont} />
       {visibleConstellations.map((constellation) => (
         <ConstellationLines key={constellation.id} segments={constellation.segments} colors={colors} />
       ))}
@@ -104,6 +134,7 @@ export function SkyCanvas({
         />
       ))}
       {showLabels &&
+        labelFont &&
         brightStars
           .filter(({ star }) => star.name && star.magnitude < LABELED_STAR_MAGNITUDE)
           .map(({ star, point }) => (
@@ -118,6 +149,7 @@ export function SkyCanvas({
             />
           ))}
       {showLabels &&
+        labelFont &&
         visibleConstellations.map((constellation) => (
           <ConstellationLabel
             key={`label-${constellation.id}`}
@@ -128,7 +160,14 @@ export function SkyCanvas({
           />
         ))}
       {projectedPlanets.map(({ planet, point }) => (
-        <PlanetMark key={planet.id} name={planet.name} magnitude={planet.magnitude} point={point} colors={colors} />
+        <PlanetMark
+          key={planet.id}
+          name={planet.name}
+          magnitude={planet.magnitude}
+          point={point}
+          font={labelFont}
+          colors={colors}
+        />
       ))}
       {highlightPoint && (
         <>
@@ -144,11 +183,13 @@ function PlanetMark({
   name,
   magnitude,
   point,
+  font,
   colors,
 }: {
   name: string;
   magnitude: number;
   point: { x: number; y: number };
+  font: SkFont | null;
   colors: Palette;
 }) {
   const radius = Math.max(3, radiusForMagnitude(magnitude) + 1);
@@ -157,7 +198,9 @@ function PlanetMark({
       {/* Soft halo so planets stand apart from stars at a glance */}
       <Circle cx={point.x} cy={point.y} r={radius + 4} color={colors.planet} opacity={0.2} />
       <Circle cx={point.x} cy={point.y} r={radius} color={colors.planet} />
-      <Text x={point.x + radius + 6} y={point.y + 4} text={name} font={labelFont} color={colors.planet} />
+      {font && (
+        <Text x={point.x + radius + 6} y={point.y + 4} text={name} font={font} color={colors.planet} />
+      )}
     </>
   );
 }
@@ -167,7 +210,15 @@ function PlanetMark({
  * each and a segmented horizon line between adjacent visible markers, so the
  * user always knows which way they're facing and where the ground is.
  */
-function HorizonAndCardinals({ markers, colors }: { markers: CardinalMarker[]; colors: Palette }) {
+function HorizonAndCardinals({
+  markers,
+  colors,
+  font,
+}: {
+  markers: CardinalMarker[];
+  colors: Palette;
+  font: SkFont | null;
+}) {
   return (
     <>
       {markers.map((marker, index) => {
@@ -196,16 +247,17 @@ function HorizonAndCardinals({ markers, colors }: { markers: CardinalMarker[]; c
           strokeWidth={2}
         />
       ))}
-      {markers.map((marker) => (
-        <Text
-          key={`cardinal-${marker.label}`}
-          x={marker.point.x - (marker.label.length > 1 ? 10 : 5)}
-          y={marker.point.y + 20}
-          text={marker.label}
-          font={cardinalFont}
-          color={colors.cardinal}
-        />
-      ))}
+      {font &&
+        markers.map((marker) => (
+          <Text
+            key={`cardinal-${marker.label}`}
+            x={marker.point.x - (marker.label.length > 1 ? 10 : 5)}
+            y={marker.point.y + 20}
+            text={marker.label}
+            font={font}
+            color={colors.cardinal}
+          />
+        ))}
     </>
   );
 }

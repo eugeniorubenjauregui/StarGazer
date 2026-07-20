@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Platform } from 'react-native';
 import { DeviceMotion } from 'expo-sensors';
 import { pitchFromAcceleration } from '@/src/services/sensors/tilt';
 import { smoothValue } from '@/src/services/sensors/smoothing';
@@ -21,9 +22,15 @@ export function useDeviceTilt(): TiltState {
 
   useEffect(() => {
     let cancelled = false;
-    let subscription: ReturnType<typeof DeviceMotion.addListener> | null = null;
+    let subscription: { remove: () => void } | null = null;
 
     (async () => {
+      // ASSUMPTION: DeviceMotion native listeners are unavailable on web.
+      if (Platform.OS === 'web' || typeof DeviceMotion.addListener !== 'function') {
+        setState({ pitchDegrees: null, status: 'unavailable' });
+        return;
+      }
+
       const available = await DeviceMotion.isAvailableAsync();
       if (cancelled) return;
 
