@@ -1,5 +1,14 @@
+import { useMemo } from 'react';
 import { Platform } from 'react-native';
-import { Canvas, Circle, Line, Text, matchFont, type SkFont } from '@shopify/react-native-skia';
+import {
+  Canvas,
+  Circle,
+  Line,
+  Text,
+  Skia,
+  matchFont,
+  type SkFont,
+} from '@shopify/react-native-skia';
 import { colors } from '@/src/theme/colors';
 import { radiusForMagnitude, opacityForMagnitude } from './starVisuals';
 import type { ProjectedStar, ProjectedConstellation } from '@/src/services/sky-map/projectSky';
@@ -14,12 +23,32 @@ export interface SkyCanvasProps {
   showLabels?: boolean;
 }
 
-const labelFont = matchFont({
-  fontFamily: Platform.select({ ios: 'Helvetica', android: 'sans-serif', default: 'sans-serif' }),
-  fontSize: 12,
-  fontStyle: 'normal',
-  fontWeight: 'normal',
-});
+const LABEL_FONT_SIZE = 12;
+
+/**
+ * Resolves a label font after Skia is available.
+ * ASSUMPTION: On web, matchFont/System FontMgr is unreliable; use default Skia.Font.
+ */
+function resolveLabelFont(): SkFont | null {
+  try {
+    if (Platform.OS === 'web') {
+      return Skia.Font(null, LABEL_FONT_SIZE);
+    }
+
+    return matchFont({
+      fontFamily: Platform.select({
+        ios: 'Helvetica',
+        android: 'sans-serif',
+        default: 'sans-serif',
+      }),
+      fontSize: LABEL_FONT_SIZE,
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+    });
+  } catch {
+    return null;
+  }
+}
 
 /** Purely presentational: draws already-projected screen-space points. See services/sky-map/projectSky for the astronomy -> screen pipeline. */
 export function SkyCanvas({
@@ -30,12 +59,15 @@ export function SkyCanvas({
   height,
   showLabels = true,
 }: SkyCanvasProps) {
+  const labelFont = useMemo(() => resolveLabelFont(), []);
+
   return (
     <Canvas style={{ width, height, backgroundColor: colors.skyBackground }}>
       {visibleConstellations.map((constellation) => (
         <ConstellationLines key={constellation.id} segments={constellation.segments} />
       ))}
       {showLabels &&
+        labelFont &&
         visibleConstellations.map((constellation) => (
           <ConstellationLabel
             key={`label-${constellation.id}`}
