@@ -8,6 +8,7 @@ import {
 } from '@/src/services/astro/coordinates';
 import type { Star } from '@/src/services/catalog/types';
 import type { ResolvedConstellation } from '@/src/services/catalog/loadConstellations';
+import type { PlanetPosition } from '@/src/services/astro/planets';
 
 export interface ProjectedStar {
   star: Star;
@@ -25,11 +26,17 @@ export interface CardinalMarker {
   point: ScreenPoint;
 }
 
+export interface ProjectedPlanet {
+  planet: PlanetPosition;
+  point: ScreenPoint;
+}
+
 export interface ProjectedSky {
   projectedStars: ProjectedStar[];
   visibleConstellations: ProjectedConstellation[];
   projectedPointById: Map<string, ScreenPoint>;
   cardinalMarkers: CardinalMarker[];
+  projectedPlanets: ProjectedPlanet[];
 }
 
 const CARDINAL_POINTS: { label: string; azimuth: number }[] = [
@@ -93,6 +100,7 @@ export function projectVectors(
 export interface ProjectSkyParams {
   stars: Star[];
   constellations: ResolvedConstellation[];
+  planets?: PlanetPosition[];
   observer: Observer;
   date: Date;
   centerAzimuth: number;
@@ -105,6 +113,7 @@ export interface ProjectSkyParams {
 export function projectSky({
   stars,
   constellations,
+  planets = [],
   observer,
   date,
   centerAzimuth,
@@ -135,5 +144,21 @@ export function projectSky({
 
   const cardinalMarkers = projectCardinalMarkers(centerAzimuth, centerAltitude, fovDegrees, width, height);
 
-  return { projectedStars, visibleConstellations, projectedPointById, cardinalMarkers };
+  const fovRadians = (fovDegrees * Math.PI) / 180;
+  const viewCenter = altAzToVector(centerAzimuth, centerAltitude);
+  const projectedPlanets: ProjectedPlanet[] = [];
+  for (const planet of planets) {
+    const horizontal = equatorialToHorizontal(planet.ra, planet.dec, observer, date);
+    if (horizontal.altitude < 0) continue; // below the horizon, not visible
+    const point = projectGnomonic(
+      altAzToVector(horizontal.azimuth, horizontal.altitude),
+      viewCenter,
+      fovRadians,
+      width,
+      height
+    );
+    if (point) projectedPlanets.push({ planet, point });
+  }
+
+  return { projectedStars, visibleConstellations, projectedPointById, cardinalMarkers, projectedPlanets };
 }

@@ -2,11 +2,18 @@ import { Platform } from 'react-native';
 import { Canvas, Circle, Line, Text, matchFont, type SkFont } from '@shopify/react-native-skia';
 import { colors } from '@/src/theme/colors';
 import { radiusForMagnitude, opacityForMagnitude } from './starVisuals';
-import type { ProjectedStar, ProjectedConstellation, CardinalMarker } from '@/src/services/sky-map/projectSky';
+import type {
+  ProjectedStar,
+  ProjectedConstellation,
+  ProjectedPlanet,
+  CardinalMarker,
+} from '@/src/services/sky-map/projectSky';
 
 export interface SkyCanvasProps {
   projectedStars: ProjectedStar[];
   visibleConstellations: ProjectedConstellation[];
+  /** Moon and naked-eye planets projected into the current view. */
+  projectedPlanets?: ProjectedPlanet[];
   /** Compass points (N, E, S, O...) projected onto the horizon. */
   cardinalMarkers?: CardinalMarker[];
   /** Display name shown next to each constellation, keyed by constellation id. */
@@ -14,6 +21,8 @@ export interface SkyCanvasProps {
   width: number;
   height: number;
   showLabels?: boolean;
+  /** Transparent background so the camera feed shows through in AR mode. */
+  transparent?: boolean;
 }
 
 const labelFont = matchFont({
@@ -34,14 +43,16 @@ const cardinalFont = matchFont({
 export function SkyCanvas({
   projectedStars,
   visibleConstellations,
+  projectedPlanets = [],
   cardinalMarkers = [],
   constellationNames = {},
   width,
   height,
   showLabels = true,
+  transparent = false,
 }: SkyCanvasProps) {
   return (
-    <Canvas style={{ width, height, backgroundColor: colors.skyBackground }}>
+    <Canvas style={{ width, height, backgroundColor: transparent ? 'transparent' : colors.skyBackground }}>
       <HorizonAndCardinals markers={cardinalMarkers} />
       {visibleConstellations.map((constellation) => (
         <ConstellationLines key={constellation.id} segments={constellation.segments} />
@@ -65,7 +76,30 @@ export function SkyCanvas({
           opacity={opacityForMagnitude(star.magnitude)}
         />
       ))}
+      {projectedPlanets.map(({ planet, point }) => (
+        <PlanetMark key={planet.id} name={planet.name} magnitude={planet.magnitude} point={point} />
+      ))}
     </Canvas>
+  );
+}
+
+function PlanetMark({
+  name,
+  magnitude,
+  point,
+}: {
+  name: string;
+  magnitude: number;
+  point: { x: number; y: number };
+}) {
+  const radius = Math.max(3, radiusForMagnitude(magnitude) + 1);
+  return (
+    <>
+      {/* Soft halo so planets stand apart from stars at a glance */}
+      <Circle cx={point.x} cy={point.y} r={radius + 4} color={colors.planet} opacity={0.2} />
+      <Circle cx={point.x} cy={point.y} r={radius} color={colors.planet} />
+      <Text x={point.x + radius + 6} y={point.y + 4} text={name} font={labelFont} color={colors.planet} />
+    </>
   );
 }
 

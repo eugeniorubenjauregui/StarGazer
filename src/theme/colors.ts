@@ -1,9 +1,15 @@
 export const colors = {
   skyBackground: '#02030F',
+  surface: '#0D1330',
+  surfaceBorder: '#232C55',
   star: '#FFFFFF',
   constellationLine: '#4C6B9A',
   constellationLabel: '#9FB3D6',
   horizonHint: '#2A2F45',
   cardinal: '#E8B84B',
   planet: '#F5D9A0',
+  accent: '#7C9EFF',
+  textPrimary: '#F2F5FF',
+  textSecondary: '#9FB3D6',
+  success: '#6BD98F',
 };
