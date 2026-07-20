@@ -109,7 +109,13 @@ export function SkyCanvas({
         />
       ))}
       {projectedPlanets.map(({ planet, point }) => (
-        <PlanetMark key={planet.id} name={planet.name} magnitude={planet.magnitude} point={point} />
+        <PlanetMark
+          key={planet.id}
+          name={planet.name}
+          magnitude={planet.magnitude}
+          point={point}
+          font={labelFont}
+        />
       ))}
     </Canvas>
   );
@@ -119,10 +125,12 @@ function PlanetMark({
   name,
   magnitude,
   point,
+  font,
 }: {
   name: string;
   magnitude: number;
   point: { x: number; y: number };
+  font: SkFont | null;
 }) {
   const radius = Math.max(3, radiusForMagnitude(magnitude) + 1);
   return (
@@ -130,7 +138,15 @@ function PlanetMark({
       {/* Soft halo so planets stand apart from stars at a glance */}
       <Circle cx={point.x} cy={point.y} r={radius + 4} color={colors.planet} opacity={0.2} />
       <Circle cx={point.x} cy={point.y} r={radius} color={colors.planet} />
-      <Text x={point.x + radius + 6} y={point.y + 4} text={name} font={labelFont} color={colors.planet} />
+      {font && (
+        <Text
+          x={point.x + radius + 6}
+          y={point.y + 4}
+          text={name}
+          font={font}
+          color={colors.planet}
+        />
+      )}
     </>
   );
 }
