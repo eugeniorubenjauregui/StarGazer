@@ -19,10 +19,46 @@ export interface ProjectedConstellation {
   segments: { pointA: ScreenPoint; pointB: ScreenPoint }[];
 }
 
+export interface CardinalMarker {
+  label: string;
+  azimuth: number;
+  point: ScreenPoint;
+}
+
 export interface ProjectedSky {
   projectedStars: ProjectedStar[];
   visibleConstellations: ProjectedConstellation[];
   projectedPointById: Map<string, ScreenPoint>;
+  cardinalMarkers: CardinalMarker[];
+}
+
+const CARDINAL_POINTS: { label: string; azimuth: number }[] = [
+  { label: 'N', azimuth: 0 },
+  { label: 'NE', azimuth: 45 },
+  { label: 'E', azimuth: 90 },
+  { label: 'SE', azimuth: 135 },
+  { label: 'S', azimuth: 180 },
+  { label: 'SO', azimuth: 225 },
+  { label: 'O', azimuth: 270 },
+  { label: 'NO', azimuth: 315 },
+];
+
+/** Projects the compass points sitting on the horizon (altitude 0) into screen space. */
+export function projectCardinalMarkers(
+  centerAzimuth: number,
+  centerAltitude: number,
+  fovDegrees: number,
+  width: number,
+  height: number
+): CardinalMarker[] {
+  const fovRadians = (fovDegrees * Math.PI) / 180;
+  const viewCenter = altAzToVector(centerAzimuth, centerAltitude);
+  const markers: CardinalMarker[] = [];
+  for (const { label, azimuth } of CARDINAL_POINTS) {
+    const point = projectGnomonic(altAzToVector(azimuth, 0), viewCenter, fovRadians, width, height);
+    if (point) markers.push({ label, azimuth, point });
+  }
+  return markers;
 }
 
 /** Slow tier: RA/Dec -> Az/Alt -> unit vector only depends on observer position and date, not view direction. */
@@ -97,5 +133,7 @@ export function projectSky({
     if (segments.length > 0) visibleConstellations.push({ id: constellation.id, segments });
   }
 
-  return { projectedStars, visibleConstellations, projectedPointById };
+  const cardinalMarkers = projectCardinalMarkers(centerAzimuth, centerAltitude, fovDegrees, width, height);
+
+  return { projectedStars, visibleConstellations, projectedPointById, cardinalMarkers };
 }

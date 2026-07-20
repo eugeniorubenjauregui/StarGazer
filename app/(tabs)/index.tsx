@@ -70,6 +70,7 @@ export default function SkyMapScreen() {
         <SkyCanvas
           projectedStars={sky.projectedStars}
           visibleConstellations={sky.visibleConstellations}
+          cardinalMarkers={sky.cardinalMarkers}
           constellationNames={constellationNames}
           width={width}
           height={height}
